@@ -19,7 +19,8 @@
 
 #ifdef __cplusplus
 
-extern "C" {
+extern "C"
+{
 
 #endif
 
@@ -45,15 +46,18 @@ typedef struct pv_rhino pv_rhino_t;
  * @return Status code. Returns 'PV_STATUS_INVALID_ARGUMENT', 'PV_STATUS_IO_ERROR', or 'PV_STATUS_OUT_OF_MEMORY' on
  * failure.
  */
-PV_API pv_status_t pv_rhino_init(const char* model_path, const char* context_path, float sensitivity,
-                                 pv_rhino_t** object);
+PV_API pv_status_t pv_rhino_init(
+        const char *model_path,
+        const char *context_path,
+        float sensitivity,
+        pv_rhino_t **object);
 
 /**
  * Destructor.
  *
  * @param object Speech-to-Intent object.
  */
-PV_API void pv_rhino_delete(pv_rhino_t* object);
+PV_API void pv_rhino_delete(pv_rhino_t *object);
 
 /**
  * Processes a frame of audio and emits a flag indicating if the inference is finalized. When finalized,
@@ -66,7 +70,7 @@ PV_API void pv_rhino_delete(pv_rhino_t* object);
  * @param[out] is_finalized Flag indicating if the inference is finalized.
  * @return Status code. Returns 'PV_STATUS_INVALID_ARGUMENT' or 'PV_STATUS_OUT_OF_MEMORY' on failure.
  */
-PV_API pv_status_t pv_rhino_process(pv_rhino_t* object, const int16_t* pcm, bool* is_finalized);
+PV_API pv_status_t pv_rhino_process(pv_rhino_t *object, const int16_t *pcm, bool *is_finalized);
 
 /**
  * Indicates if the spoken command is valid, is within the domain of interest (context), and the engine understood it.
@@ -77,7 +81,7 @@ PV_API pv_status_t pv_rhino_process(pv_rhino_t* object, const int16_t* pcm, bool
  * @param[out] is_understood Flag indicating if the spoken command is understood.
  * @return Status code. Returns 'PV_STATUS_INVALID_ARGUMENT' on failure.
  */
-PV_API pv_status_t pv_rhino_is_understood(const pv_rhino_t* object, bool* is_understood);
+PV_API pv_status_t pv_rhino_is_understood(const pv_rhino_t *object, bool *is_understood);
 
 /**
  * Getter for the intent. The intent is stored as an intent string and pairs of slots and values. It should be called
@@ -87,15 +91,18 @@ PV_API pv_status_t pv_rhino_is_understood(const pv_rhino_t* object, bool* is_und
  * @param object Speech-to-Intent object.
  * @param[out] intent Inferred intent.
  * @param[out] num_slots Number of slots.
- * @param[out] slots Array of inferred slots. Its memory needs to be freed by calling
- * 'pv_rhino_free_slots_and_values()'.
+ * @param[out] slots Array of inferred slots. Its memory needs to be freed by calling 'pv_rhino_free_slots_and_values()'.
  * @param[out] values Array of inferred slot values. Its memory needs to be freed by calling
  * 'pv_rhino_free_slots_and_values()'.
  * @return State code. Returns 'PV_STATUS_INVALID_ARGUMENT', 'PV_STATUS_INVALID_STATE', or 'PV_STATUS_OUT_OF_MEMORY' on
  * failure.
  */
-PV_API pv_status_t pv_rhino_get_intent(const pv_rhino_t* object, const char** intent, int32_t* num_slots,
-                                       const char*** slots, const char*** values);
+PV_API pv_status_t pv_rhino_get_intent(
+        const pv_rhino_t *object,
+        const char **intent,
+        int32_t *num_slots,
+        const char ***slots,
+        const char ***values);
 
 /**
  * Frees memory resources allocated to slots and values after calling 'pv_rhino_get_intent()'. One shouldn't free these
@@ -107,7 +114,7 @@ PV_API pv_status_t pv_rhino_get_intent(const pv_rhino_t* object, const char** in
  *
  * @return Returns 'PV_STATUS_INVALID_ARGUMENT' on failure.
  */
-PV_API pv_status_t pv_rhino_free_slots_and_values(const pv_rhino_t* object, const char** slots, const char** values);
+PV_API pv_status_t pv_rhino_free_slots_and_values(const pv_rhino_t *object, const char **slots, const char **values);
 
 /**
  * Resets the internal state of the engine. It should be called before the engine can be used to infer intent from a new
@@ -116,7 +123,7 @@ PV_API pv_status_t pv_rhino_free_slots_and_values(const pv_rhino_t* object, cons
  * @param object Speech-to-Intent object.
  * @return Status code. Returns 'PV_STATUS_INVALID_ARGUMENT' on failure.
  */
-PV_API pv_status_t pv_rhino_reset(pv_rhino_t* object);
+PV_API pv_status_t pv_rhino_reset(pv_rhino_t *object);
 
 /**
  * Getter for context information.
@@ -125,14 +132,14 @@ PV_API pv_status_t pv_rhino_reset(pv_rhino_t* object);
  * @param[out] context_info Context information.
  * @return Status code. Returns 'PV_STATUS_INVALID_ARGUMENT' on failure.
  */
-PV_API pv_status_t pv_rhino_context_info(const pv_rhino_t* object, const char** context_info);
+PV_API pv_status_t pv_rhino_context_info(const pv_rhino_t *object, const char **context_info);
 
 /**
  * Getter for version.
  *
  * @return Version.
  */
-PV_API const char* pv_rhino_version(void);
+PV_API const char *pv_rhino_version(void);
 
 /**
  * Getter for number of audio samples per frame.
@@ -142,8 +149,9 @@ PV_API const char* pv_rhino_version(void);
 PV_API int32_t pv_rhino_frame_length(void);
 
 #ifdef __cplusplus
+
 }
 
 #endif
 
-#endif  // PV_RHINO_H
+#endif // PV_RHINO_H
