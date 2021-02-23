@@ -10,5 +10,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <depend>portaudio19-dev</depend>
   <depend>roscpp</depend>
 </package>

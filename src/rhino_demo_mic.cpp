@@ -12,23 +12,24 @@
 #include <alsa/asoundlib.h>
 #include <dlfcn.h>
 #include <stdio.h>
+#include <string>
 
 #include "pv_rhino.h"
 
 int main(int argc, char* argv[])
 {
-  if (argc != 4)
+  if (argc != 3)
   {
-    fprintf(stderr, "usage : %s model_path context_path input_audio_device\n", argv[0]);
+    fprintf(stderr, "usage : %s context_path input_audio_device\n", argv[0]);
     exit(1);
   }
 
-  const char* model_path = argv[1];
-  const char* context_path = argv[2];
-  const char* input_audio_device = argv[3];
+  std::string model_path;
+  const char* context_path = argv[1];
+  const char* input_audio_device = argv[2];
 
   pv_rhino_t* rhino = NULL;
-  pv_status_t status = pv_rhino_init(model_path, context_path, 0.5f, &rhino);
+  pv_status_t status = pv_rhino_init(model_path.c_str(), context_path, 0.5f, &rhino);
   if (status != PV_STATUS_SUCCESS)
   {
     fprintf(stderr, "'pv_rhino_init' failed with '%s'\n", pv_status_to_string(status));

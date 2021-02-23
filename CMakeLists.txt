@@ -18,6 +18,9 @@ catkin_package(
 ## Build ##
 ###########
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
+find_package(PORTAUDIO REQUIRED)
+
 set(PICOVOICE_DIR extern/picovoice)
 set(PICOVOICE_INCLUDE_DIRS ${PICOVOICE_DIR}/include)
 set(PICOVOICE_LIBRARIES ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/libpv_rhino.so)
@@ -26,10 +29,14 @@ include_directories(
   ${ALSA_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${PICOVOICE_INCLUDE_DIRS}
+  ${PORTAUDIO_INCLUDE_DIRS}
 )
 
 add_executable(${PROJECT_NAME}_rhino_demo_mic src/rhino_demo_mic.cpp)
 target_link_libraries(${PROJECT_NAME}_rhino_demo_mic ${ALSA_LIBRARIES} ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES})
+
+add_executable(${PROJECT_NAME}_paex_record src/paex_record.cpp)
+target_link_libraries(${PROJECT_NAME}_paex_record ${ALSA_LIBRARIES} ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES} ${PORTAUDIO_LIBRARIES})
 
 #############
 ## Install ##
@@ -50,6 +57,7 @@ install(DIRECTORY ${PICOVOICE_DIR}/resources
 
 install(
   TARGETS
+    ${PROJECT_NAME}_paex_record
     ${PROJECT_NAME}_rhino_demo_mic
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
