@@ -9,76 +9,47 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(ALSA REQUIRED)
 
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS
+    roscpp
+)
 
 ###########
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
+set(PICOVOICE_DIR extern/picovoice)
+set(PICOVOICE_INCLUDE_DIRS ${PICOVOICE_DIR}/include)
+set(PICOVOICE_LIBRARIES ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/libpv_rhino.so)
+
 include_directories(
-  include
   ${ALSA_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
-  ${PROJECT_SOURCE_DIR}/extern/picovoice/include
+  ${PICOVOICE_INCLUDE_DIRS}
 )
 
-link_directories(${PROJECT_SOURCE_DIR}/extern/picovoice/lib)
 add_executable(${PROJECT_NAME}_rhino_demo_mic src/rhino_demo_mic.cpp)
-target_link_libraries(${PROJECT_NAME}_rhino_demo_mic pv_rhino ${ALSA_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_rhino_demo_mic ${ALSA_LIBRARIES} ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES})
 
 #############
 ## Install ##
 #############
 
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
+install(FILES ${PICOVOICE_LIBRARIES}
+  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(DIRECTORY ${PICOVOICE_INCLUDE_DIRS}
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+)
 
-## Mark executables for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-# install(TARGETS ${PROJECT_NAME}_node
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(DIRECTORY ${PICOVOICE_DIR}/resources
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${PICOVOICE_DIR}
+)
 
-## Mark libraries for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-# install(TARGETS ${PROJECT_NAME}
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-# )
-
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_picovoice_ros.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+install(
+  TARGETS
+    ${PROJECT_NAME}_rhino_demo_mic
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
