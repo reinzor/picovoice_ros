@@ -36,7 +36,10 @@ add_executable(${PROJECT_NAME}_rhino_demo_mic src/rhino_demo_mic.cpp)
 target_link_libraries(${PROJECT_NAME}_rhino_demo_mic ${ALSA_LIBRARIES} ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES})
 
 add_executable(${PROJECT_NAME}_paex_record src/paex_record.cpp)
-target_link_libraries(${PROJECT_NAME}_paex_record ${ALSA_LIBRARIES} ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES} ${PORTAUDIO_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_paex_record ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES} ${PORTAUDIO_LIBRARIES})
+
+add_executable(${PROJECT_NAME}_paex_record_rhino_demo src/paex_record_rhino_demo.cpp)
+target_link_libraries(${PROJECT_NAME}_paex_record_rhino_demo ${ALSA_LIBRARIES} ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES} ${PORTAUDIO_LIBRARIES})
 
 #############
 ## Install ##
@@ -58,6 +61,7 @@ install(DIRECTORY ${PICOVOICE_DIR}/resources
 install(
   TARGETS
     ${PROJECT_NAME}_paex_record
+    ${PROJECT_NAME}_paex_record_rhino_demo
     ${PROJECT_NAME}_rhino_demo_mic
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
