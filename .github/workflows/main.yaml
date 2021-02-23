@@ -1,0 +1,19 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  industrial_ci:
+    strategy:
+      matrix:
+        env:
+          - ROS_DISTRO: melodic
+          - ROS_DISTRO: noetic
+    env:
+      CATKIN_LINT: pedantic 
+      CLANG_FORMAT_CHECK: file
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: 'ros-industrial/industrial_ci@master'
+        env: ${{matrix.env}}
