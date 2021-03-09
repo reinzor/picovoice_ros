@@ -12,4 +12,5 @@
 
   <depend>portaudio19-dev</depend>
   <depend>roscpp</depend>
+  <depend>roslib</depend>
 </package>
