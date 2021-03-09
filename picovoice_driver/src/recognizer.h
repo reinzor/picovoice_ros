@@ -1,0 +1,3 @@
+namespace picovoice_driver
+{
+}

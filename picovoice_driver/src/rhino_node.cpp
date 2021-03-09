@@ -70,6 +70,9 @@ int main(int argc, char** argv)
   const char* model_path = argv[1];
   const char* context_path = argv[2];
 
+  std::cout << "Model path: " << model_path << std::endl;
+  std::cout << "Context path: " << context_path << std::endl;
+
   pv_rhino_t* rhino = NULL;
   pv_status_t status = pv_rhino_init(model_path, context_path, 0.5f, &rhino);
 

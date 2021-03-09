@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(picovoice_ros)
+project(picovoice_driver)
 
 add_compile_options(-std=c++11)
 
@@ -32,14 +32,19 @@ include_directories(
   ${PORTAUDIO_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME}_rhino_demo_mic src/rhino_demo_mic.cpp)
-target_link_libraries(${PROJECT_NAME}_rhino_demo_mic ${ALSA_LIBRARIES} ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES})
+add_library(${PROJECT_NAME}
+  src/recognizer.cpp
+  src/rhino_recognizer.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+  ${ALSA_LIBRARIES}
+  ${catkin_LIBRARIES}
+  ${PICOVOICE_LIBRARIES}
+  ${PORTAUDIO_LIBRARIES}
+)
 
-add_executable(${PROJECT_NAME}_paex_record src/paex_record.cpp)
-target_link_libraries(${PROJECT_NAME}_paex_record ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES} ${PORTAUDIO_LIBRARIES})
-
-add_executable(${PROJECT_NAME}_paex_record_rhino_demo src/paex_record_rhino_demo.cpp)
-target_link_libraries(${PROJECT_NAME}_paex_record_rhino_demo ${ALSA_LIBRARIES} ${catkin_LIBRARIES} ${PICOVOICE_LIBRARIES} ${PORTAUDIO_LIBRARIES})
+add_executable(${PROJECT_NAME}_rhino src/rhino_node.cpp)
+target_link_libraries(${PROJECT_NAME}_rhino ${PROJECT_NAME})
 
 #############
 ## Install ##
@@ -60,8 +65,8 @@ install(DIRECTORY ${PICOVOICE_DIR}/resources
 
 install(
   TARGETS
-    ${PROJECT_NAME}_paex_record
-    ${PROJECT_NAME}_paex_record_rhino_demo
-    ${PROJECT_NAME}_rhino_demo_mic
+    ${PROJECT_NAME}
+    ${PROJECT_NAME}_rhino
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )

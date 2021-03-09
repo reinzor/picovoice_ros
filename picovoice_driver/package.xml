@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>picovoice_ros</name>
+  <name>picovoice_driver</name>
   <version>0.0.0</version>
   <description>ROS Wrappers for the Picovoice libraries</description>
 
