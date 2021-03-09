@@ -1,3 +1,4 @@
+#include <ros/console.h>
 #include <stdexcept>
 
 #include "./rhino_recognizer.h"
@@ -33,6 +34,8 @@ void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameter
   {
     throw std::runtime_error("Failed to get rhino context info: " + std::string(pv_status_to_string(status)));
   }
+
+  ROS_INFO("Configured RhinoRecognizer: %s", toString(parameters).c_str());
 }
 
 RhinoRecognizerData::Result RhinoRecognizer::getResult()
