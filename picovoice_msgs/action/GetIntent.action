@@ -1,0 +1,6 @@
+string context
+---
+bool is_understood
+string intent
+KeyValue[] slots
+---

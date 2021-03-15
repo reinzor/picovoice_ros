@@ -10,6 +10,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <depend>picovoice_msgs</depend>
   <depend>portaudio19-dev</depend>
   <depend>roscpp</depend>
   <depend>roslib</depend>

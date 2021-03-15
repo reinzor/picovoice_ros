@@ -4,6 +4,7 @@ project(picovoice_driver)
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
+  picovoice_msgs
   roscpp
   roslib
 )
