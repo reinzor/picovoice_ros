@@ -31,6 +31,8 @@ public:
     parameters_.model_path_ = local_nh.param("model_path", default_model_path);
     parameters_.sensitivity_ = local_nh.param("sensitivity", parameters_.sensitivity_);
     server_.start();
+
+    ROS_INFO("RecognizerNode(%s) initialized", name.c_str());
   }
 
 private:
