@@ -1,4 +1,3 @@
-#include <ros/console.h>
 #include <stdexcept>
 
 #include "./porcupine_recognizer.h"
@@ -38,7 +37,6 @@ void PorcupineRecognizer::configure(const PorcupineRecognizerData::Parameters& p
                              std::string(pv_status_to_string(status)));
   }
   keywords_ = { parameters.keyword_path_ };
-  ROS_INFO("Configured PorcupineRecognizer: %s", toString(parameters).c_str());
 }
 
 PorcupineRecognizerData::Result PorcupineRecognizer::getResult()

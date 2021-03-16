@@ -1,46 +1,52 @@
+#include <picovoice_msgs/GetIntentAction.h>
 #include <ros/init.h>
-#include <ros/node_handle.h>
-#include <ros/package.h>
 
 #include "./rhino_recognizer.h"
-#include "./util.h"
+#include "./recognizer_node.h"
 
-using namespace picovoice_driver;
-
-std::string defaultResourcePath()
+namespace picovoice_driver
 {
-  auto pkg_path = ros::package::getPath("picovoice_driver");
-  if (pkg_path.empty())
+using namespace picovoice_msgs;
+class RhinoNode : public RecognizerNode<RhinoRecognizerData, RhinoRecognizer, GetIntentAction>
+{
+public:
+  RhinoNode() : RecognizerNode("get_intent", defaultResourcePath() + "/models/rhino_params.pv")
   {
-    throw std::runtime_error("Could not find picovoice_driver package");
   }
-  return pkg_path + "/extern/picovoice/resources";
-}
+
+private:
+  void updateParameters(const GetIntentGoal& goal, RhinoRecognizerData::Parameters& parameters) override
+  {
+    parameters.context_path_ = defaultResourcePath() + "/contexts/coffee_maker_linux.rhn";
+  }
+
+  void updateResult(const RhinoRecognizerData::Result& result, GetIntentResult& action_result) override
+  {
+    action_result.is_understood = result.is_understood_;
+    action_result.intent = result.intent_;
+    for (const auto& slot : result.slots_)
+    {
+      picovoice_msgs::KeyValue kv;
+      kv.key = slot.key_;
+      kv.value = slot.value_;
+      action_result.slots.push_back(kv);
+    }
+  }
+};
+}  // namespace picovoice_driver
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "rhino");
-
-  ros::NodeHandle local_nh("~");
-  auto default_resource_path = defaultResourcePath();
-  RhinoRecognizerData::Parameters parameters;
-  parameters.model_path_ = local_nh.param("model_path", default_resource_path + "/models/rhino_params.pv");
-  parameters.context_path_ = local_nh.param("context_path", default_resource_path + "/contexts/coffee_maker_linux.rhn");
-  parameters.sensitivity_ = local_nh.param("sensitivity", parameters.sensitivity_);
-
   try
   {
-    RhinoRecognizer recognizer;
-    recognizer.configure(parameters);
-    recognizer.recognize();
-    auto result = recognizer.getResult();
-
-    ROS_INFO("Result: %s", toString(result).c_str());
+    picovoice_driver::RhinoNode node;
+    ros::spin();
   }
   catch (const std::exception& e)
   {
-    ROS_FATAL("Recognizer exception: %s", e.what());
+    ROS_FATAL("RhinoNode exception: %s", e.what());
+    return 1;
   }
-
   return 0;
 }

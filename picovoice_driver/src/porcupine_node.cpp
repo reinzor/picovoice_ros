@@ -1,47 +1,45 @@
+#include <picovoice_msgs/GetWakeWordAction.h>
 #include <ros/init.h>
-#include <ros/node_handle.h>
-#include <ros/package.h>
 
 #include "./porcupine_recognizer.h"
-#include "./util.h"
+#include "./recognizer_node.h"
 
-using namespace picovoice_driver;
-
-std::string defaultResourcePath()
+namespace picovoice_driver
 {
-  auto pkg_path = ros::package::getPath("picovoice_driver");
-  if (pkg_path.empty())
+using namespace picovoice_msgs;
+class PorcupineNode : public RecognizerNode<PorcupineRecognizerData, PorcupineRecognizer, GetWakeWordAction>
+{
+public:
+  PorcupineNode() : RecognizerNode("get_wake_word", defaultResourcePath() + "/models/porcupine_params.pv")
   {
-    throw std::runtime_error("Could not find picovoice_driver package");
   }
-  return pkg_path + "/extern/picovoice/resources";
-}
+
+private:
+  void updateParameters(const GetWakeWordGoal& goal, PorcupineRecognizerData::Parameters& parameters) override
+  {
+    parameters.keyword_path_ = defaultResourcePath() + "/keyword_files/porcupine_linux.ppn";
+  }
+
+  void updateResult(const PorcupineRecognizerData::Result& result, GetWakeWordResult& action_result) override
+  {
+    action_result.is_understood = result.is_understood_;
+    action_result.keyword = result.keyword_;
+  }
+};
+}  // namespace picovoice_driver
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "porcupine");
-
-  ros::NodeHandle local_nh("~");
-  auto default_resource_path = defaultResourcePath();
-  PorcupineRecognizerData::Parameters parameters;
-  parameters.model_path_ = local_nh.param("model_path", default_resource_path + "/models/porcupine_params.pv");
-  parameters.keyword_path_ = local_nh.param("keyword_path", default_resource_path + "/keyword_files/"
-                                                                                    "porcupine_linux.ppn");
-  parameters.sensitivity_ = local_nh.param("sensitivity", parameters.sensitivity_);
-
   try
   {
-    PorcupineRecognizer recognizer;
-    recognizer.configure(parameters);
-    recognizer.recognize();
-    auto result = recognizer.getResult();
-
-    ROS_INFO("Result: %s", toString(result).c_str());
+    picovoice_driver::PorcupineNode node;
+    ros::spin();
   }
   catch (const std::exception& e)
   {
-    ROS_FATAL("Recognizer exception: %s", e.what());
+    ROS_FATAL("PorcupineNode exception: %s", e.what());
+    return 1;
   }
-
   return 0;
 }

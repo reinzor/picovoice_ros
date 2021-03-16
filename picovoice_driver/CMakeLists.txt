@@ -4,6 +4,7 @@ project(picovoice_driver)
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
+  actionlib
   picovoice_msgs
   roscpp
   roslib
@@ -11,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   CATKIN_DEPENDS
+    actionlib
     roscpp
     roslib
 )

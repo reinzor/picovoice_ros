@@ -1,4 +1,3 @@
-#include <ros/console.h>
 #include <stdexcept>
 
 #include "./rhino_recognizer.h"
@@ -33,7 +32,7 @@ void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameter
       pv_rhino_init(parameters.model_path_.data(), parameters.context_path_.data(), parameters.sensitivity_, &rhino_);
   if (status != PV_STATUS_SUCCESS)
   {
-    throw std::runtime_error("Failed to initialize picovoice rhino with parameters " + toString(parameters) + ":" +
+    throw std::runtime_error("Failed to initialize picovoice rhino with parameters " + toString(parameters) + ": " +
                              std::string(pv_status_to_string(status)));
   }
   const char* context_info = NULL;
@@ -42,8 +41,6 @@ void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameter
   {
     throw std::runtime_error("Failed to get rhino context info: " + std::string(pv_status_to_string(status)));
   }
-
-  ROS_INFO("Configured RhinoRecognizer: %s", toString(parameters).c_str());
 }
 
 RhinoRecognizerData::Result RhinoRecognizer::getResult()
