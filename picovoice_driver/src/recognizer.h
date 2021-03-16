@@ -23,6 +23,12 @@ public:
   //!
   void preempt();
 
+  //!
+  //! \brief isRecognizing Whether the recognize method is running (thread safe)
+  //! \return True if recognizing, False otherwise
+  //!
+  bool isRecognizing();
+
 protected:
   struct RecordSettings
   {
@@ -36,7 +42,8 @@ protected:
   virtual bool recognizeProcess(int16_t* frames) = 0;
 
 private:
-  std::atomic<bool> preempt_requested_;
+  std::atomic<bool> preempt_requested_ = ATOMIC_VAR_INIT(false);
+  std::atomic<bool> is_recognizing_ = ATOMIC_VAR_INIT(false);
 };
 
 template <typename RecognizerDataType>

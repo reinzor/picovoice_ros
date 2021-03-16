@@ -8,10 +8,12 @@ namespace picovoice_driver
 void Recognizer::recognize()
 {
   preempt_requested_.store(false);
+  is_recognizing_.store(true);
 
   PaError err = Pa_Initialize();
   if (err != paNoError)
   {
+    is_recognizing_.store(false);
     throw std::runtime_error("Failed to initialize PortAudio");
   }
 
@@ -20,6 +22,7 @@ void Recognizer::recognize()
   if (input_parameters.device == paNoDevice)
   {
     Pa_Terminate();
+    is_recognizing_.store(false);
     throw std::runtime_error("Could not get default input device");
   }
   input_parameters.channelCount = 1;
@@ -35,6 +38,7 @@ void Recognizer::recognize()
   catch (const std::exception& e)
   {
     Pa_Terminate();
+    is_recognizing_.store(false);
     throw std::runtime_error("getRecordSettings failed: " + std::string(e.what()));
   }
 
@@ -45,6 +49,7 @@ void Recognizer::recognize()
   catch (const std::exception& e)
   {
     Pa_Terminate();
+    is_recognizing_.store(false);
     throw std::runtime_error("recognizeInit failed: " + std::string(e.what()));
   }
 
@@ -54,6 +59,7 @@ void Recognizer::recognize()
   if (err != paNoError)
   {
     Pa_Terminate();
+    is_recognizing_.store(false);
     throw std::runtime_error("Could not open stream");
   }
 
@@ -61,6 +67,7 @@ void Recognizer::recognize()
   if (err != paNoError)
   {
     Pa_Terminate();
+    is_recognizing_.store(false);
     throw std::runtime_error("Could not start stream");
   }
 
@@ -75,6 +82,7 @@ void Recognizer::recognize()
     if (err)
     {
       Pa_Terminate();
+      is_recognizing_.store(false);
       throw std::runtime_error("Could not read stream");
     }
 
@@ -85,16 +93,23 @@ void Recognizer::recognize()
     catch (const std::exception& e)
     {
       Pa_Terminate();
+      is_recognizing_.store(false);
       throw std::runtime_error("recognizeProcess failed: " + std::string(e.what()));
     }
     sample_index += record_settings.frame_length_;
   }
 
   Pa_Terminate();
+  is_recognizing_.store(false);
 }
 
 void Recognizer::preempt()
 {
   preempt_requested_.store(true);
+}
+
+bool Recognizer::isRecognizing()
+{
+  return is_recognizing_.load();
 }
 }  // namespace picovoice_driver
