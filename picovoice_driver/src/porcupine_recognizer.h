@@ -32,6 +32,8 @@ std::ostream& operator<<(std::ostream& os, const PorcupineRecognizerData::Result
 class PorcupineRecognizer : public RecognizerT<PorcupineRecognizerData>
 {
 public:
+  ~PorcupineRecognizer();
+
   void configure(const PorcupineRecognizerData::Parameters& parameters) override;
   PorcupineRecognizerData::Result getResult() override;
 

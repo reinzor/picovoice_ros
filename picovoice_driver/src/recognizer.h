@@ -1,15 +1,27 @@
 #pragma once
 
+#include <atomic>
 #include <cstdint>
 #include <portaudio.h>
 #include <stddef.h>
 
 namespace picovoice_driver
 {
+//!
+//! \brief The Recognizer class used for recognizing something out of audio data
+//!
 class Recognizer
 {
 public:
+  //!
+  //! \brief recognize Recognize something from an audio input stream
+  //!
   void recognize();
+
+  //!
+  //! \brief preempt Preempt the recognition (thread safe)
+  //!
+  void preempt();
 
 protected:
   struct RecordSettings
@@ -22,6 +34,9 @@ protected:
   virtual void recognizeInit() = 0;
 
   virtual bool recognizeProcess(int16_t* frames) = 0;
+
+private:
+  std::atomic<bool> preempt_requested_;
 };
 
 template <typename RecognizerDataType>

@@ -35,6 +35,8 @@ std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Result& r)
 class RhinoRecognizer : public RecognizerT<RhinoRecognizerData>
 {
 public:
+  ~RhinoRecognizer();
+
   void configure(const RhinoRecognizerData::Parameters& parameters) override;
   RhinoRecognizerData::Result getResult() override;
 

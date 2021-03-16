@@ -19,6 +19,14 @@ std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Result& r)
   return os;
 }
 
+RhinoRecognizer::~RhinoRecognizer()
+{
+  if (rhino_ != NULL)
+  {
+    pv_rhino_delete(rhino_);
+  }
+}
+
 void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameters)
 {
   pv_status_t status =

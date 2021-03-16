@@ -7,6 +7,8 @@ namespace picovoice_driver
 {
 void Recognizer::recognize()
 {
+  preempt_requested_.store(false);
+
   PaError err = Pa_Initialize();
   if (err != paNoError)
   {
@@ -67,7 +69,7 @@ void Recognizer::recognize()
   size_t sample_index = 0;
   size_t total_samples = num_seconds * record_settings.sample_rate_;
   std::vector<int16_t> recorded_samples(total_samples * sizeof(int16_t));
-  while (sample_index < total_samples && !is_finalized)
+  while (sample_index < total_samples && !is_finalized && !preempt_requested_.load())
   {
     err = Pa_ReadStream(stream, &recorded_samples.data()[sample_index], record_settings.frame_length_);
     if (err)
@@ -89,5 +91,10 @@ void Recognizer::recognize()
   }
 
   Pa_Terminate();
+}
+
+void Recognizer::preempt()
+{
+  preempt_requested_.store(true);
 }
 }  // namespace picovoice_driver

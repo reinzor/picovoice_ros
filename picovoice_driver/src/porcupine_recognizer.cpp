@@ -19,6 +19,14 @@ std::ostream& operator<<(std::ostream& os, const PorcupineRecognizerData::Result
   return os;
 }
 
+PorcupineRecognizer::~PorcupineRecognizer()
+{
+  if (porcupine_ != NULL)
+  {
+    pv_porcupine_delete(porcupine_);
+  }
+}
+
 void PorcupineRecognizer::configure(const PorcupineRecognizerData::Parameters& parameters)
 {
   const char* keyword = parameters.keyword_path_.data();
