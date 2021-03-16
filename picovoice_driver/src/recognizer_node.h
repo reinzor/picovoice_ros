@@ -91,12 +91,14 @@ private:
     }
 
     std::thread t(&RecognizerNode::recognizeThread, this);
+    ros::Duration(0.01).sleep();  // TODO(reinzor): fix by changing the variable to recognition finished or something
     while (ros::ok() && recognizer_.isRecognizing())
     {
       if (server_.isPreemptRequested())
       {
         recognizer_.preempt();
       }
+      ros::Duration(0.01).sleep();  // TODO(reinzor): parameterize
     }
     t.join();
 
