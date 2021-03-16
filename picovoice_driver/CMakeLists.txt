@@ -9,8 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
 )
 
-find_package(ALSA REQUIRED)
-
 catkin_package(
   CATKIN_DEPENDS
     roscpp
@@ -32,7 +30,6 @@ set(PICOVOICE_LIBRARIES
 )
 
 include_directories(
-  ${ALSA_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${PICOVOICE_INCLUDE_DIRS}
   ${PORTAUDIO_INCLUDE_DIRS}
@@ -45,7 +42,6 @@ add_library(${PROJECT_NAME}
   src/util.cpp
 )
 target_link_libraries(${PROJECT_NAME}
-  ${ALSA_LIBRARIES}
   ${catkin_LIBRARIES}
   ${PICOVOICE_LIBRARIES}
   ${PORTAUDIO_LIBRARIES}
