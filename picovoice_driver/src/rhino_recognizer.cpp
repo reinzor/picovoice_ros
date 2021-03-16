@@ -75,6 +75,11 @@ Recognizer::RecordSettings RhinoRecognizer::getRecordSettings()
   return settings;
 }
 
+void RhinoRecognizer::recognizeInit()
+{
+  pv_rhino_reset(rhino_);
+}
+
 bool RhinoRecognizer::recognizeProcess(int16_t* frames)
 {
   bool is_finalized = false;

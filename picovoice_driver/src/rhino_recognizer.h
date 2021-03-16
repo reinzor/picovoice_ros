@@ -40,6 +40,8 @@ public:
 
 private:
   RecordSettings getRecordSettings() override;
+  void recognizeInit() override;
+
   bool recognizeProcess(int16_t* frames) override;
 
   pv_rhino_t* rhino_ = NULL;

@@ -33,6 +33,16 @@ void Recognizer::recognize()
   catch (const std::exception& e)
   {
     Pa_Terminate();
+    throw std::runtime_error("getRecordSettings failed: " + std::string(e.what()));
+  }
+
+  try
+  {
+    recognizeInit();
+  }
+  catch (const std::exception& e)
+  {
+    Pa_Terminate();
     throw std::runtime_error("recognizeInit failed: " + std::string(e.what()));
   }
 

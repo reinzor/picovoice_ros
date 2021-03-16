@@ -17,7 +17,10 @@ protected:
     size_t sample_rate_ = 0;
     size_t frame_length_ = 0;
   };
+
   virtual RecordSettings getRecordSettings() = 0;
+  virtual void recognizeInit() = 0;
+
   virtual bool recognizeProcess(int16_t* frames) = 0;
 };
 

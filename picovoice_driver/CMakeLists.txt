@@ -26,7 +26,10 @@ find_package(PORTAUDIO REQUIRED)
 
 set(PICOVOICE_DIR extern/picovoice)
 set(PICOVOICE_INCLUDE_DIRS ${PICOVOICE_DIR}/include)
-set(PICOVOICE_LIBRARIES ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/libpv_rhino.so)
+set(PICOVOICE_LIBRARIES
+  ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/libpv_porcupine.so
+  ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/libpv_rhino.so
+)
 
 include_directories(
   ${ALSA_INCLUDE_DIRS}
@@ -36,6 +39,7 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
+  src/porcupine_recognizer.cpp
   src/recognizer.cpp
   src/rhino_recognizer.cpp
   src/util.cpp
@@ -49,6 +53,9 @@ target_link_libraries(${PROJECT_NAME}
 
 add_executable(${PROJECT_NAME}_rhino src/rhino_node.cpp)
 target_link_libraries(${PROJECT_NAME}_rhino ${PROJECT_NAME})
+
+add_executable(${PROJECT_NAME}_porcupine src/porcupine_node.cpp)
+target_link_libraries(${PROJECT_NAME}_porcupine ${PROJECT_NAME})
 
 #############
 ## Install ##
