@@ -1,2 +1,0 @@
-string keyword
-string url

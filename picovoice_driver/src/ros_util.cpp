@@ -32,7 +32,7 @@ std::string pathFromUrl(const std::string& url, const std::string& extension, co
     {
       validatePathExistence(directory);
 
-      if (boost::filesystem::exists(directory + "/" + url))
+      if (boost::filesystem::exists(directory + "/" + url) && boost::algorithm::ends_with(url, extension))
       {
         return directory + "/" + url;
       }

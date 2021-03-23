@@ -19,7 +19,7 @@ public:
 private:
   void updateParameters(const GetIntentGoal& goal, RhinoRecognizerData::Parameters& parameters) override
   {
-    parameters.context_path_ = pathFromUrl("coffee_maker_lisnux", ".rhn", contexts_directory_url_);
+    parameters.context_path_ = pathFromUrl(goal.context_url, ".rhn", contexts_directory_url_);
   }
 
   void updateResult(const RhinoRecognizerData::Result& result, GetIntentResult& action_result) override
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     RhinoRecognizerData::Parameters parameters;
     parameters.model_path_ = pathFromUrl(model_url);
 
-    RhinoNode node(parameters, contexts_directory_url);
+    RhinoNode node(parameters, pathFromUrl(contexts_directory_url));
     ros::spin();
   }
   catch (const std::exception& e)

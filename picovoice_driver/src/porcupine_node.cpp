@@ -1,4 +1,4 @@
-#include <picovoice_msgs/GetWakeWordAction.h>
+#include <picovoice_msgs/GetKeywordAction.h>
 #include <ros/init.h>
 
 #include "./porcupine_recognizer.h"
@@ -8,24 +8,33 @@
 namespace picovoice_driver
 {
 using namespace picovoice_msgs;
-class PorcupineNode : public RecognizerNode<PorcupineRecognizerData, PorcupineRecognizer, GetWakeWordAction>
+class PorcupineNode : public RecognizerNode<PorcupineRecognizerData, PorcupineRecognizer, GetKeywordAction>
 {
 public:
   PorcupineNode(const PorcupineRecognizerData::Parameters& parameters, const std::string& keywords_directory)
-    : RecognizerNode("get_wake_word", parameters), keywords_directory_(keywords_directory)
+    : RecognizerNode("get_keyword", parameters), keywords_directory_(keywords_directory)
   {
   }
 
 private:
-  void updateParameters(const GetWakeWordGoal& goal, PorcupineRecognizerData::Parameters& parameters) override
+  void updateParameters(const GetKeywordGoal& goal, PorcupineRecognizerData::Parameters& parameters) override
   {
-    parameters.keyword_path_ = pathFromUrl("porcupineds_linux", ".ppn", keywords_directory_);
+    if (goal.keywords.empty())
+    {
+      throw std::runtime_error("No keywords specified");
+    }
+
+    parameters.keywords_.clear();
+    for (const auto& keyword : goal.keywords)
+    {
+      parameters.keywords_[keyword.name] = pathFromUrl(keyword.url, ".ppn", keywords_directory_);
+    }
   }
 
-  void updateResult(const PorcupineRecognizerData::Result& result, GetWakeWordResult& action_result) override
+  void updateResult(const PorcupineRecognizerData::Result& result, GetKeywordResult& action_result) override
   {
     action_result.is_understood = result.is_understood_;
-    action_result.keyword = result.keyword_;
+    action_result.keyword_name = result.keyword_name_;
   }
 
   std::string keywords_directory_;

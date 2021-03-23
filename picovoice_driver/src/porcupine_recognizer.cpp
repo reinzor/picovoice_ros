@@ -7,14 +7,14 @@ namespace picovoice_driver
 {
 std::ostream& operator<<(std::ostream& os, const PorcupineRecognizerData::Parameters& p)
 {
-  os << "Parameters(keyword_path=" << p.keyword_path_ << ", model_path=" << p.model_path_
+  os << "Parameters(keywords_=" << toString(p.keywords_) << ", model_path=" << p.model_path_
      << ", sensitivity=" << p.sensitivity_ << ")";
   return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const PorcupineRecognizerData::Result& r)
 {
-  os << "Result(is_understood=" << r.is_understood_ << ", keyword=" << r.keyword_ << ")";
+  os << "Result(is_understood=" << r.is_understood_ << ", keyword=" << r.keyword_name_ << ")";
   return os;
 }
 
@@ -28,15 +28,23 @@ PorcupineRecognizer::~PorcupineRecognizer()
 
 void PorcupineRecognizer::configure(const PorcupineRecognizerData::Parameters& parameters)
 {
-  const char* keyword = parameters.keyword_path_.data();
-  float sensitivity = static_cast<float>(parameters.sensitivity_);
-  pv_status_t status = pv_porcupine_init(parameters.model_path_.data(), 1, &keyword, &sensitivity, &porcupine_);
+  keyword_names_.clear();
+  keyword_paths_.clear();
+  keyword_sensitivities_.clear();
+  for (const auto& kv : parameters.keywords_)
+  {
+    keyword_names_.push_back(kv.first);
+    keyword_paths_.push_back(kv.second.c_str());
+    keyword_sensitivities_.push_back(static_cast<float>(parameters.sensitivity_));
+  }
+
+  pv_status_t status = pv_porcupine_init(parameters.model_path_.data(), keyword_names_.size(),
+                                         keyword_paths_.data(), keyword_sensitivities_.data(), &porcupine_);
   if (status != PV_STATUS_SUCCESS)
   {
     throw std::runtime_error("Failed to initialize picovoice porcupine with parameters " + toString(parameters) + ":" +
                              std::string(pv_status_to_string(status)));
   }
-  keywords_ = { parameters.keyword_path_ };
 }
 
 PorcupineRecognizerData::Result PorcupineRecognizer::getResult()
@@ -69,14 +77,14 @@ bool PorcupineRecognizer::recognizeProcess(int16_t* frames)
   {
     return false;
   }
-  if (static_cast<size_t>(keyword_index) >= keywords_.size())
+  if (static_cast<size_t>(keyword_index) >= keyword_names_.size())
   {
     throw std::runtime_error("Keyword index " + std::to_string(keyword_index) + " out of bound for keywords " +
-                             toString(keywords_));
+                             toString(keyword_names_));
   }
 
   result_.is_understood_ = true;
-  result_.keyword_ = keywords_.at(keyword_index);
+  result_.keyword_name_ = keyword_names_.at(keyword_index);
   return true;
 }
 }  // namespace picovoice_driver

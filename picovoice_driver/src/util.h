@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -26,6 +27,28 @@ std::string toString(const std::vector<T>& v)
       ss << ", ";
     }
     ss << v[i];
+  }
+  ss << "}";
+  return ss.str();
+}
+
+template <typename T1, typename T2>
+std::string toString(const std::map<T1, T2>& v)
+{
+  std::stringstream ss;
+  ss << "{";
+  bool first = true;
+  for (const auto& kv : v)
+  {
+    if (first)
+    {
+      first = false;
+    }
+    else
+    {
+      ss << ", ";
+    }
+    ss << kv.first << "=" << kv.second;
   }
   ss << "}";
   return ss.str();

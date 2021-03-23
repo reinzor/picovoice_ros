@@ -16,14 +16,14 @@ struct PorcupineRecognizerData
   struct Parameters
   {
     std::string model_path_;
-    std::string keyword_path_;
+    std::map<std::string, std::string> keywords_;
     double sensitivity_ = 0.5;
   };
 
   struct Result
   {
     bool is_understood_ = false;
-    std::string keyword_;
+    std::string keyword_name_;
   };
 };
 std::ostream& operator<<(std::ostream& os, const PorcupineRecognizerData::Parameters& p);
@@ -43,7 +43,10 @@ private:
 
   bool recognizeProcess(int16_t* frames) override;
 
-  std::vector<std::string> keywords_;
+  std::vector<std::string> keyword_names_;
+  std::vector<const char*> keyword_paths_;
+  std::vector<float> keyword_sensitivities_;
+
   PorcupineRecognizerData::Result result_;
   pv_porcupine_t* porcupine_ = NULL;
 };

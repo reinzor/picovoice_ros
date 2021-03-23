@@ -8,12 +8,12 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(FILES
   KeyValue.msg
-  KeywordUrl.msg
+  Keyword.msg
 )
 
 add_action_files(FILES
   GetIntent.action
-  GetWakeWord.action
+  GetKeyword.action
 )
 
 generate_messages(DEPENDENCIES
