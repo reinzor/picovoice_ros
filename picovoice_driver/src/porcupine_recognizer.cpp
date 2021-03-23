@@ -38,8 +38,8 @@ void PorcupineRecognizer::configure(const PorcupineRecognizerData::Parameters& p
     keyword_sensitivities_.push_back(static_cast<float>(parameters.sensitivity_));
   }
 
-  pv_status_t status = pv_porcupine_init(parameters.model_path_.data(), keyword_names_.size(),
-                                         keyword_paths_.data(), keyword_sensitivities_.data(), &porcupine_);
+  pv_status_t status = pv_porcupine_init(parameters.model_path_.data(), keyword_names_.size(), keyword_paths_.data(),
+                                         keyword_sensitivities_.data(), &porcupine_);
   if (status != PV_STATUS_SUCCESS)
   {
     throw std::runtime_error("Failed to initialize picovoice porcupine with parameters " + toString(parameters) + ":" +
