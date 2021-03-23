@@ -87,9 +87,7 @@ std::string pathFromUrl(const std::string& url, const std::string& extension, co
   {
     std::string err = "Failed to get path from url '" + url + "': " + std::string(e.what()) +
                       " - The url should be of form {package://path_relative_to_package" + extension +
-                      ", "
-                      "file:///absolute/path" +
-                      extension + "}";
+                      ", file:///absolute/path" + extension + "}";
     if (!directory.empty() && !extension.empty())
     {
       err += " or a filename[" + extension + "] relative to directory '" + directory + "'";
