@@ -1,4 +1,4 @@
-string context
+string context_url
 ---
 bool is_understood
 string intent
