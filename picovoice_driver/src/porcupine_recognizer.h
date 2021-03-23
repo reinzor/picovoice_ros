@@ -17,7 +17,7 @@ struct PorcupineRecognizerData
   {
     std::string model_path_;
     std::string keyword_path_;
-    float sensitivity_ = 0.5;
+    double sensitivity_ = 0.5;
   };
 
   struct Result

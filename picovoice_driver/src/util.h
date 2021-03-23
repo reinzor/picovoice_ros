@@ -1,21 +1,11 @@
 #pragma once
 
-#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
 namespace picovoice_driver
 {
-struct KeyValue
-{
-  KeyValue(const std::string& key, const std::string& value);
-
-  std::string key_;
-  std::string value_;
-};
-std::ostream& operator<<(std::ostream& os, const KeyValue& kv);
-
 template <typename T>
 std::string toString(const T& v)
 {

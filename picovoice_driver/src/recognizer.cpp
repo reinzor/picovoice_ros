@@ -5,7 +5,7 @@
 
 namespace picovoice_driver
 {
-void Recognizer::recognize()
+void Recognizer::recognizeThread()
 {
   preempt_requested_.store(false);
   is_recognizing_.store(true);
@@ -103,13 +103,51 @@ void Recognizer::recognize()
   is_recognizing_.store(false);
 }
 
+void Recognizer::recognizeThreadCatchException()
+{
+  try
+  {
+    recognizeThread();
+  }
+  catch (const std::exception& e)
+  {
+    recognize_thread_exception_string_ = std::string(e.what());
+  }
+}
+
+void Recognizer::recognize()
+{
+  if (recognize_thread_ != nullptr)
+  {
+    throw std::runtime_error("Already recognizing");
+  }
+  recognize_thread_exception_string_.clear();
+  is_recognizing_.store(true);
+  recognize_thread_.reset(new std::thread(&Recognizer::recognizeThreadCatchException, this));
+}
+
 void Recognizer::preempt()
 {
   preempt_requested_.store(true);
 }
 
+bool Recognizer::isPreempting()
+{
+  return preempt_requested_.load();
+}
+
 bool Recognizer::isRecognizing()
 {
-  return is_recognizing_.load();
+  bool is_recognizing = is_recognizing_.load();
+  if (!is_recognizing)
+  {
+    recognize_thread_->join();
+    recognize_thread_.reset();
+    if (!recognize_thread_exception_string_.empty())
+    {
+      throw std::runtime_error("Recognize thread exception: " + recognize_thread_exception_string_);
+    }
+  }
+  return is_recognizing;
 }
 }  // namespace picovoice_driver

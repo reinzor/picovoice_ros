@@ -2,8 +2,10 @@
 
 #include <atomic>
 #include <cstdint>
+#include <memory>
 #include <portaudio.h>
 #include <stddef.h>
+#include <thread>
 
 namespace picovoice_driver
 {
@@ -19,12 +21,17 @@ public:
   void recognize();
 
   //!
-  //! \brief preempt Preempt the recognition (thread safe)
+  //! \brief preempt Preempt the recognition
   //!
   void preempt();
 
   //!
-  //! \brief isRecognizing Whether the recognize method is running (thread safe)
+  //! \brief isPreempting Whether a preempt was requested
+  //!
+  bool isPreempting();
+
+  //!
+  //! \brief isRecognizing Whether the recognize method is running
   //! \return True if recognizing, False otherwise
   //!
   bool isRecognizing();
@@ -36,9 +43,12 @@ protected:
     size_t frame_length_ = 0;
   };
 
+  std::string recognize_thread_exception_string_;
+  std::shared_ptr<std::thread> recognize_thread_;
+  void recognizeThread();
+  void recognizeThreadCatchException();
   virtual RecordSettings getRecordSettings() = 0;
   virtual void recognizeInit() = 0;
-
   virtual bool recognizeProcess(int16_t* frames) = 0;
 
 private:

@@ -11,6 +11,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>actionlib</depend>
+  <depend>ddynamic_reconfigure</depend>
   <depend>picovoice_msgs</depend>
   <depend>portaudio19-dev</depend>
   <depend>roscpp</depend>

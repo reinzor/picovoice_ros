@@ -11,6 +11,17 @@ std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Parameters
   return os;
 }
 
+RhinoRecognizerData::Result::KeyValue::KeyValue(const std::string& key, const std::string& value)
+  : key_(key), value_(value)
+{
+}
+
+std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Result::KeyValue& kv)
+{
+  os << "{" << kv.key_ << "=" << kv.value_ << "}";
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Result& r)
 {
   os << "Result(is_understood=" << r.is_understood_ << ", intent=" << r.intent_ << ", slots=" << toString(r.slots_)
@@ -28,8 +39,8 @@ RhinoRecognizer::~RhinoRecognizer()
 
 void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameters)
 {
-  pv_status_t status =
-      pv_rhino_init(parameters.model_path_.data(), parameters.context_path_.data(), parameters.sensitivity_, &rhino_);
+  pv_status_t status = pv_rhino_init(parameters.model_path_.data(), parameters.context_path_.data(),
+                                     static_cast<float>(parameters.sensitivity_), &rhino_);
   if (status != PV_STATUS_SUCCESS)
   {
     throw std::runtime_error("Failed to initialize picovoice rhino with parameters " + toString(parameters) + ": " +

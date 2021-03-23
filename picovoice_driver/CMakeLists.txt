@@ -5,6 +5,7 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   actionlib
+  ddynamic_reconfigure
   picovoice_msgs
   roscpp
   roslib
@@ -13,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   CATKIN_DEPENDS
     actionlib
+    ddynamic_reconfigure
     roscpp
     roslib
 )
@@ -41,7 +43,6 @@ add_library(${PROJECT_NAME}
   src/porcupine_recognizer.cpp
   src/recognizer.cpp
   src/rhino_recognizer.cpp
-  src/util.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
@@ -49,10 +50,16 @@ target_link_libraries(${PROJECT_NAME}
   ${PORTAUDIO_LIBRARIES}
 )
 
-add_executable(${PROJECT_NAME}_rhino src/rhino_node.cpp)
+add_executable(${PROJECT_NAME}_rhino
+  src/rhino_node.cpp
+  src/ros_util.cpp
+)
 target_link_libraries(${PROJECT_NAME}_rhino ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_porcupine src/porcupine_node.cpp)
+add_executable(${PROJECT_NAME}_porcupine
+  src/porcupine_node.cpp
+  src/ros_util.cpp
+)
 target_link_libraries(${PROJECT_NAME}_porcupine ${PROJECT_NAME})
 
 #############

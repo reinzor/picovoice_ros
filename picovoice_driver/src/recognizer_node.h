@@ -1,42 +1,37 @@
 #pragma once
 
 #include <actionlib/server/simple_action_server.h>
+#include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 #include <ros/node_handle.h>
-#include <ros/package.h>
 #include <string>
-#include <thread>
 
 #include "./util.h"
 
 namespace picovoice_driver
 {
-std::string defaultResourcePath()
-{
-  auto pkg_path = ros::package::getPath("picovoice_driver");
-  if (pkg_path.empty())
-  {
-    throw std::runtime_error("Could not find picovoice_driver package");
-  }
-  return pkg_path + "/extern/picovoice/resources";
-}
-
 template <typename RecognizerDataType, typename RecognizerType, typename ActionType>
 class RecognizerNode
 {
 public:
-  explicit RecognizerNode(const std::string& name, const std::string& default_model_path)
-    : server_(name, boost::bind(&RecognizerNode::executeCallback, this, _1), false)
+  explicit RecognizerNode(const std::string& name, const typename RecognizerDataType::Parameters& parameters)
+    : action_server_(name, boost::bind(&RecognizerNode::executeCallback, this, _1), false), parameters_(parameters)
   {
-    ros::NodeHandle local_nh("~");
-    parameters_.model_path_ = local_nh.param("model_path", default_model_path);
-    parameters_.sensitivity_ = local_nh.param("sensitivity", parameters_.sensitivity_);
-    server_.start();
+    dynamic_reconfigure_server_.registerVariable<double>("sensitivity", &parameters_.sensitivity_,
+                                                         "Recognizer sensitivity", 0., 1.);
+    dynamic_reconfigure_server_.publishServicesTopics();
 
-    ROS_INFO("RecognizerNode(%s) initialized", name.c_str());
+    ros::NodeHandle local_nh("~");
+    local_nh.param("execute_period", execute_period_, execute_period_);
+
+    action_server_.start();
+    ROS_INFO("RecognizerNode(name=%s, execute_period=%.2f) initialized with parameters %s", name.c_str(),
+             execute_period_, toString(parameters_).c_str());
   }
 
 private:
   typename RecognizerDataType::Parameters parameters_;
+  ddynamic_reconfigure::DDynamicReconfigure dynamic_reconfigure_server_;
+
   RecognizerType recognizer_;
 
   virtual void updateParameters(const typename ActionType::_action_goal_type::_goal_type& goal,
@@ -44,23 +39,8 @@ private:
   virtual void updateResult(const typename RecognizerDataType::Result& result,
                             typename ActionType::_action_result_type::_result_type& action_result) = 0;
 
-  std::string recognize_thread_error_;
-  void recognizeThread()
-  {
-    ROS_INFO("Recognizing ..");
-    recognize_thread_error_.clear();
-    try
-    {
-      recognizer_.recognize();
-    }
-    catch (const std::exception& e)
-    {
-      recognize_thread_error_ = std::string(e.what());
-    }
-    ROS_INFO("Recognizing done");
-  }
-
-  actionlib::SimpleActionServer<ActionType> server_;
+  actionlib::SimpleActionServer<ActionType> action_server_;
+  double execute_period_ = 0.01;
   void executeCallback(const typename ActionType::_action_goal_type::_goal_type::ConstPtr& goal)
   {
     typename ActionType::_action_result_type::_result_type action_result;
@@ -73,7 +53,7 @@ private:
     {
       std::string msg = "Invalid goal: " + std::string(e.what());
       ROS_ERROR("%s", msg.c_str());
-      server_.setAborted(action_result, msg);
+      action_server_.setAborted(action_result, msg);
       return;
     }
 
@@ -86,41 +66,44 @@ private:
     {
       std::string msg = "Could not configure recognizer: " + std::string(e.what());
       ROS_ERROR("%s", msg.c_str());
-      server_.setAborted(action_result, msg);
+      action_server_.setAborted(action_result, msg);
       return;
     }
 
-    std::thread t(&RecognizerNode::recognizeThread, this);
-    ros::Duration(0.01).sleep();  // TODO(reinzor): fix by changing the variable to recognition finished or something
-    while (ros::ok() && recognizer_.isRecognizing())
+    ROS_INFO("Recognizing ..");
+    recognizer_.recognize();
+    try
     {
-      if (server_.isPreemptRequested())
+      while (ros::ok() && recognizer_.isRecognizing())
       {
-        recognizer_.preempt();
+        if (action_server_.isPreemptRequested() && !recognizer_.isPreempting())
+        {
+          ROS_WARN("Preempt requested");
+          recognizer_.preempt();
+        }
+        ros::Duration(execute_period_).sleep();
       }
-      ros::Duration(0.01).sleep();  // TODO(reinzor): parameterize
     }
-    t.join();
-
-    if (!recognize_thread_error_.empty())
+    catch (const std::exception& e)
     {
-      std::string msg = "Recognize error: " + recognize_thread_error_;
+      std::string msg = "Recognize error: " + std::string(e.what());
       ROS_ERROR("%s", msg.c_str());
-      server_.setAborted(action_result, msg);
+      action_server_.setAborted(action_result, msg);
       return;
     }
+    ROS_INFO("Recognizing done");
 
     auto result = recognizer_.getResult();
     ROS_INFO("Result: %s", toString(result).c_str());
 
     updateResult(result, action_result);
-    if (server_.isPreemptRequested())
+    if (action_server_.isPreemptRequested())
     {
-      server_.setPreempted(action_result);
+      action_server_.setPreempted(action_result);
     }
     else
     {
-      server_.setSucceeded(action_result);
+      action_server_.setSucceeded(action_result);
     }
   }
 };

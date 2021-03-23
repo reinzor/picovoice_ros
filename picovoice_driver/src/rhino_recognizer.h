@@ -18,7 +18,7 @@ struct RhinoRecognizerData
   {
     std::string model_path_;
     std::string context_path_;
-    float sensitivity_ = 0.5;
+    double sensitivity_ = 0.5;
   };
 
   struct Result
@@ -26,10 +26,19 @@ struct RhinoRecognizerData
     bool is_understood_ = false;
     std::string intent_;
 
+    struct KeyValue
+    {
+      KeyValue(const std::string& key, const std::string& value);
+
+      std::string key_;
+      std::string value_;
+    };
+
     std::vector<KeyValue> slots_;
   };
 };
 std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Parameters& p);
+std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Result::KeyValue& kv);
 std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Result& r);
 
 class RhinoRecognizer : public RecognizerT<RhinoRecognizerData>
