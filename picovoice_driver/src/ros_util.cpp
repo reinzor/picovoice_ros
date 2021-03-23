@@ -28,7 +28,7 @@ std::string pathFromUrl(const std::string& url, const std::string& extension, co
 {
   try
   {
-    if (!directory.empty())
+    if (url.find("://") == std::string::npos && !directory.empty())
     {
       validatePathExistence(directory);
 
