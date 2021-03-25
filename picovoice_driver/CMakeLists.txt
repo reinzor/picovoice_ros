@@ -25,6 +25,7 @@ catkin_package(
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
 find_package(PORTAUDIO REQUIRED)
+find_package(LIBSNDFILE REQUIRED)
 
 set(PICOVOICE_DIR extern/picovoice)
 set(PICOVOICE_INCLUDE_DIRS ${PICOVOICE_DIR}/include)
@@ -35,6 +36,7 @@ set(PICOVOICE_LIBRARIES
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${LIBSNDFILE_INCLUDE_DIRS}
   ${PICOVOICE_INCLUDE_DIRS}
   ${PORTAUDIO_INCLUDE_DIRS}
 )
@@ -46,6 +48,7 @@ add_library(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  ${LIBSNDFILE_LIBRARIES}
   ${PICOVOICE_LIBRARIES}
   ${PORTAUDIO_LIBRARIES}
 )

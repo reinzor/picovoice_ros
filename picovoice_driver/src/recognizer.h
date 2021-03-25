@@ -1,10 +1,7 @@
 #pragma once
 
 #include <atomic>
-#include <cstdint>
 #include <memory>
-#include <portaudio.h>
-#include <stddef.h>
 #include <thread>
 
 namespace picovoice_driver
@@ -15,6 +12,8 @@ namespace picovoice_driver
 class Recognizer
 {
 public:
+  void initialize(const std::string& record_directory, double max_record_length);
+
   //!
   //! \brief recognize Recognize something from an audio input stream
   //!
@@ -37,6 +36,10 @@ public:
   bool isRecognizing();
 
 protected:
+  bool initialized_ = false;
+  std::string record_directory_;
+  double max_record_length_;
+
   struct RecordSettings
   {
     size_t sample_rate_ = 0;

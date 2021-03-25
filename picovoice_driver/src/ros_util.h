@@ -12,6 +12,12 @@ namespace picovoice_driver
 std::string defaultResourceUrl();
 
 //!
+//! \brief defaultRecordDirectory Get the default record dir
+//! \return Default record dir
+//!
+std::string defaultRecordDirectory();
+
+//!
 //! \brief pathFromUrl Get a file path from an url
 //!
 //! URL options:

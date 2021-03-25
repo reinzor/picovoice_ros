@@ -12,6 +12,11 @@ std::string defaultResourceUrl()
   return "package://picovoice_driver/extern/picovoice/resources";
 }
 
+std::string defaultRecordDirectory()
+{
+  return std::string("/tmp/picovoice_driver");
+}
+
 void validatePathExistence(const std::string& path, const std::string& extension = "")
 {
   if (!boost::filesystem::exists(path))

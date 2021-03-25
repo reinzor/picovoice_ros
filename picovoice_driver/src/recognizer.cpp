@@ -1,3 +1,7 @@
+#include <boost/filesystem.hpp>
+#include <chrono>
+#include <portaudio.h>
+#include <sndfile.h>
 #include <stdexcept>
 #include <vector>
 
@@ -5,6 +9,33 @@
 
 namespace picovoice_driver
 {
+std::string getEpochStamp()
+{
+  using namespace std::chrono;
+  unsigned long ms_since_epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+  unsigned long seconds_since_epoch = ms_since_epoch / 1e3;
+  unsigned long ms_decimals_since_epoch = ms_since_epoch - seconds_since_epoch * 1e3;
+  return std::to_string(seconds_since_epoch) + "." + std::to_string(ms_decimals_since_epoch);
+}
+
+void writeWav(const std::vector<int16_t>& buffer, size_t buffer_size, size_t sample_rate, const std::string& directory)
+{
+  boost::filesystem::create_directories(directory);
+  std::string filename = directory + "/recording-" + getEpochStamp() + ".wav";
+
+  SF_INFO sfinfo;
+  sfinfo.channels = 1;
+  sfinfo.samplerate = sample_rate;
+  sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+  SNDFILE* outfile = sf_open(filename.c_str(), SFM_WRITE, &sfinfo);
+  if (outfile != nullptr)
+  {
+    sf_write_short(outfile, buffer.data(), buffer_size);
+    sf_write_sync(outfile);
+    sf_close(outfile);
+  }
+}
+
 void Recognizer::recognizeThread()
 {
   preempt_requested_.store(false);
@@ -72,9 +103,8 @@ void Recognizer::recognizeThread()
   }
 
   bool is_finalized = false;
-  double num_seconds = 10;
   size_t sample_index = 0;
-  size_t total_samples = num_seconds * record_settings.sample_rate_;
+  size_t total_samples = max_record_length_ * record_settings.sample_rate_;
   std::vector<int16_t> recorded_samples(total_samples * sizeof(int16_t));
   while (sample_index < total_samples && !is_finalized && !preempt_requested_.load())
   {
@@ -100,6 +130,9 @@ void Recognizer::recognizeThread()
   }
 
   Pa_Terminate();
+
+  writeWav(recorded_samples, sample_index, record_settings.sample_rate_, record_directory_);
+
   is_recognizing_.store(false);
 }
 
@@ -115,8 +148,20 @@ void Recognizer::recognizeThreadCatchException()
   }
 }
 
+void Recognizer::initialize(const std::string& record_directory, double max_record_length)
+{
+  record_directory_ = record_directory;
+  max_record_length_ = max_record_length;
+  initialized_ = true;
+}
+
 void Recognizer::recognize()
 {
+  if (!initialized_)
+  {
+    throw std::runtime_error("Recognizer not initialized");
+  }
+
   if (recognize_thread_ != nullptr)
   {
     throw std::runtime_error("Already recognizing");
@@ -128,16 +173,28 @@ void Recognizer::recognize()
 
 void Recognizer::preempt()
 {
+  if (!initialized_)
+  {
+    throw std::runtime_error("Recognizer not initialized");
+  }
   preempt_requested_.store(true);
 }
 
 bool Recognizer::isPreempting()
 {
+  if (!initialized_)
+  {
+    throw std::runtime_error("Recognizer not initialized");
+  }
   return preempt_requested_.load();
 }
 
 bool Recognizer::isRecognizing()
 {
+  if (!initialized_)
+  {
+    throw std::runtime_error("Recognizer not initialized");
+  }
   bool is_recognizing = is_recognizing_.load();
   if (!is_recognizing)
   {

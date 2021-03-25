@@ -5,6 +5,7 @@
 #include <ros/node_handle.h>
 #include <string>
 
+#include "./ros_util.h"
 #include "./util.h"
 
 namespace picovoice_driver
@@ -16,12 +17,13 @@ public:
   explicit RecognizerNode(const std::string& name, const typename RecognizerDataType::Parameters& parameters)
     : action_server_(name, boost::bind(&RecognizerNode::executeCallback, this, _1), false), parameters_(parameters)
   {
+    ros::NodeHandle pnh("~");
+    pnh.param("execute_period", execute_period_, execute_period_);
+    recognizer_.initialize(pnh.param("record_directory", defaultRecordDirectory()), pnh.param("max_record_length", 10));
+
     dynamic_reconfigure_server_.registerVariable<double>("sensitivity", &parameters_.sensitivity_,
                                                          "Recognizer sensitivity", 0., 1.);
     dynamic_reconfigure_server_.publishServicesTopics();
-
-    ros::NodeHandle local_nh("~");
-    local_nh.param("execute_period", execute_period_, execute_period_);
 
     action_server_.start();
     ROS_INFO("RecognizerNode(name=%s, execute_period=%.2f) initialized with parameters %s", name.c_str(),

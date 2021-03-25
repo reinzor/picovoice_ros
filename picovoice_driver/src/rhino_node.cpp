@@ -3,7 +3,6 @@
 
 #include "./rhino_recognizer.h"
 #include "./recognizer_node.h"
-#include "./ros_util.h"
 
 namespace picovoice_driver
 {
