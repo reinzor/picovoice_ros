@@ -1,3 +1,20 @@
+/*
+ * Copyright 2021, Rein Appeldoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 #pragma once
 
 #include <actionlib/server/simple_action_server.h>
@@ -17,17 +34,20 @@ public:
   explicit RecognizerNode(const std::string& name, const typename RecognizerDataType::Parameters& parameters)
     : action_server_(name, boost::bind(&RecognizerNode::executeCallback, this, _1), false), parameters_(parameters)
   {
-    ros::NodeHandle pnh("~");
-    pnh.param("execute_period", execute_period_, execute_period_);
-    recognizer_.initialize(pnh.param("record_directory", defaultRecordDirectory()), pnh.param("max_record_length", 10));
+    ros::NodeHandle local_nh("~");
+    local_nh.param("execute_period", execute_period_, execute_period_);
+    auto record_directory = local_nh.param("record_directory", defaultRecordDirectory());
+    auto max_record_length = local_nh.param("max_record_length", 10.);
+    recognizer_.initialize(record_directory, max_record_length);
 
     dynamic_reconfigure_server_.registerVariable<double>("sensitivity", &parameters_.sensitivity_,
                                                          "Recognizer sensitivity", 0., 1.);
     dynamic_reconfigure_server_.publishServicesTopics();
 
     action_server_.start();
-    ROS_INFO("RecognizerNode(name=%s, execute_period=%.2f) initialized with parameters %s", name.c_str(),
-             execute_period_, toString(parameters_).c_str());
+    ROS_INFO("RecognizerNode(name=%s, execute_period=%.2f, record_directory=%s, max_record_length=%.2f) initialized "
+             "with parameters %s",
+             name.c_str(), execute_period_, record_directory.c_str(), max_record_length, toString(parameters_).c_str());
   }
 
 private:
