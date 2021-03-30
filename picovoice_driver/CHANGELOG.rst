@@ -2,8 +2,8 @@
 Changelog for package picovoice_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.2 (2021-03-30)
+------------------
 * doc
 * Contributors: Rein Appeldoorn
 
