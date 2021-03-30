@@ -53,17 +53,17 @@ target_link_libraries(${PROJECT_NAME}
   ${PORTAUDIO_LIBRARIES}
 )
 
-add_executable(${PROJECT_NAME}_rhino
-  src/rhino_node.cpp
-  src/ros_util.cpp
-)
-target_link_libraries(${PROJECT_NAME}_rhino ${PROJECT_NAME})
-
 add_executable(${PROJECT_NAME}_porcupine
   src/porcupine_node.cpp
   src/ros_util.cpp
 )
 target_link_libraries(${PROJECT_NAME}_porcupine ${PROJECT_NAME})
+
+add_executable(${PROJECT_NAME}_rhino
+  src/rhino_node.cpp
+  src/ros_util.cpp
+)
+target_link_libraries(${PROJECT_NAME}_rhino ${PROJECT_NAME})
 
 #############
 ## Install ##
@@ -85,6 +85,7 @@ install(DIRECTORY ${PICOVOICE_DIR}/resources
 install(
   TARGETS
     ${PROJECT_NAME}
+    ${PROJECT_NAME}_porcupine
     ${PROJECT_NAME}_rhino
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
