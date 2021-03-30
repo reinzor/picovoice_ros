@@ -80,7 +80,22 @@ template <typename RecognizerDataType>
 class RecognizerT : public Recognizer
 {
 public:
+  //!
+  //! \brief configure Configure the recognizer
+  //!
+  //! This method should be called before calling the recognize() method
+  //!
+  //! \param parameters Parameters
+  //!
   virtual void configure(const typename RecognizerDataType::Parameters& parameters) = 0;
+
+  //!
+  //! \brief getResult Get the recognition result
+  //!
+  //! This method should be called after the recognize() method
+  //!
+  //! \return Result
+  //!
   virtual typename RecognizerDataType::Result getResult() = 0;
 };
 }  // namespace picovoice_driver

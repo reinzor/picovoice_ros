@@ -33,14 +33,32 @@ struct RhinoRecognizerData
 {
   struct Parameters
   {
+    //!
+    //! \brief model_path_ Path to the Picovoice Rhino model parameters
+    //!
     std::string model_path_;
+
+    //!
+    //! \brief context_path_ Path to the Picovoice Rhino context.rhn
+    //!
     std::string context_path_;
+
+    //!
+    //! \brief sensitivity_ Recognizer sensitivity
+    //!
     double sensitivity_ = 0.5;
   };
 
   struct Result
   {
+    //!
+    //! \brief is_understood_ Whether the recognizer understood an intent
+    //!
     bool is_understood_ = false;
+
+    //!
+    //! \brief intent_ The recognized intent
+    //!
     std::string intent_;
 
     struct KeyValue
@@ -51,6 +69,9 @@ struct RhinoRecognizerData
       std::string value_;
     };
 
+    //!
+    //! \brief slots_ The recognized intent slots
+    //!
     std::vector<KeyValue> slots_;
   };
 };

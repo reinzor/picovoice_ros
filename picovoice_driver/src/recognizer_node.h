@@ -33,8 +33,14 @@ template <typename RecognizerDataType, typename RecognizerType, typename ActionT
 class RecognizerNode
 {
 public:
-  explicit RecognizerNode(const std::string& name, const std::string& action_name,
-                          const typename RecognizerDataType::Parameters& parameters)
+  //!
+  //! \brief RecognizerNode Recognizer node that exposes an action interface for a recognizer
+  //! \param name Recognizer name
+  //! \param action_name Recognizer action name
+  //! \param parameters Initial recognizer parameters
+  //!
+  RecognizerNode(const std::string& name, const std::string& action_name,
+                 const typename RecognizerDataType::Parameters& parameters)
     : action_server_(action_name, boost::bind(&RecognizerNode::executeCallback, this, _1), false)
     , parameters_(parameters)
   {

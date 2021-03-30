@@ -32,14 +32,32 @@ struct PorcupineRecognizerData
 {
   struct Parameters
   {
+    //!
+    //! \brief model_path_ Path to the Picovoice Porcupine model parameters
+    //!
     std::string model_path_;
+
+    //!
+    //! \brief keywords_ Map from a keyword names to a keyword.ppn paths
+    //!
     std::map<std::string, std::string> keywords_;
+
+    //!
+    //! \brief sensitivity_ Recognizer sensitivity
+    //!
     double sensitivity_ = 0.5;
   };
 
   struct Result
   {
+    //!
+    //! \brief is_understood_ Whether the recognizer understood a keyword
+    //!
     bool is_understood_ = false;
+
+    //!
+    //! \brief keyword_name_ Detected keyword name
+    //!
     std::string keyword_name_;
   };
 };
