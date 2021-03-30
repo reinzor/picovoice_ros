@@ -29,7 +29,7 @@ namespace picovoice_driver
 class Recognizer
 {
 public:
-  void initialize(const std::string& record_directory, double max_record_length);
+  void initialize(const std::string& record_directory, double record_timeout);
 
   //!
   //! \brief recognize Recognize something from an audio input stream
@@ -55,7 +55,7 @@ public:
 protected:
   bool initialized_ = false;
   std::string record_directory_;
-  double max_record_length_;
+  double record_timeout_;
 
   struct RecordSettings
   {

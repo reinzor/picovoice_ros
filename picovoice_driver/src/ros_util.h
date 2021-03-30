@@ -30,9 +30,10 @@ std::string defaultResourceUrl();
 
 //!
 //! \brief defaultRecordDirectory Get the default record dir
+//! \param name Recognizer name
 //! \return Default record dir
 //!
-std::string defaultRecordDirectory();
+std::string defaultRecordDirectory(const std::string& name);
 
 //!
 //! \brief pathFromUrl Get a file path from an url

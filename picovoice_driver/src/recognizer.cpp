@@ -121,7 +121,7 @@ void Recognizer::recognizeThread()
 
   bool is_finalized = false;
   size_t sample_index = 0;
-  size_t total_samples = max_record_length_ * record_settings.sample_rate_;
+  size_t total_samples = record_timeout_ * record_settings.sample_rate_;
   std::vector<int16_t> recorded_samples(total_samples * sizeof(int16_t));
   while (sample_index < total_samples && !is_finalized && !preempt_requested_.load())
   {
@@ -168,10 +168,10 @@ void Recognizer::recognizeThreadCatchException()
   }
 }
 
-void Recognizer::initialize(const std::string& record_directory, double max_record_length)
+void Recognizer::initialize(const std::string& record_directory, double record_timeout)
 {
   record_directory_ = record_directory;
-  max_record_length_ = max_record_length;
+  record_timeout_ = record_timeout;
   initialized_ = true;
 }
 

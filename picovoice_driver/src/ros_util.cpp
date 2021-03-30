@@ -29,9 +29,9 @@ std::string defaultResourceUrl()
   return "package://picovoice_driver/extern/picovoice/resources";
 }
 
-std::string defaultRecordDirectory()
+std::string defaultRecordDirectory(const std::string& name)
 {
-  return std::string("/tmp/picovoice_driver");
+  return std::string("/tmp/picovoice_driver/" + name);
 }
 
 void validatePathExistence(const std::string& path, const std::string& extension = "")

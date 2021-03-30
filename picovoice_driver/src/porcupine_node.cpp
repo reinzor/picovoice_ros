@@ -28,7 +28,7 @@ class PorcupineNode : public RecognizerNode<PorcupineRecognizerData, PorcupineRe
 {
 public:
   PorcupineNode(const PorcupineRecognizerData::Parameters& parameters, const std::string& keywords_directory)
-    : RecognizerNode("get_keyword", parameters), keywords_directory_(keywords_directory)
+    : RecognizerNode("porcupine", "get_keyword", parameters), keywords_directory_(keywords_directory)
   {
   }
 

@@ -27,27 +27,31 @@
 
 namespace picovoice_driver
 {
+constexpr double EXECUTE_PERIOD = 0.01;
+
 template <typename RecognizerDataType, typename RecognizerType, typename ActionType>
 class RecognizerNode
 {
 public:
-  explicit RecognizerNode(const std::string& name, const typename RecognizerDataType::Parameters& parameters)
-    : action_server_(name, boost::bind(&RecognizerNode::executeCallback, this, _1), false), parameters_(parameters)
+  explicit RecognizerNode(const std::string& name, const std::string& action_name,
+                          const typename RecognizerDataType::Parameters& parameters)
+    : action_server_(action_name, boost::bind(&RecognizerNode::executeCallback, this, _1), false)
+    , parameters_(parameters)
   {
     ros::NodeHandle local_nh("~");
-    local_nh.param("execute_period", execute_period_, execute_period_);
-    auto record_directory = local_nh.param("record_directory", defaultRecordDirectory());
-    auto max_record_length = local_nh.param("max_record_length", 10.);
-    recognizer_.initialize(record_directory, max_record_length);
+    auto record_directory = local_nh.param("record_directory", defaultRecordDirectory(name));
+    auto record_timeout = local_nh.param("record_timeout", 300.);
+    recognizer_.initialize(record_directory, record_timeout);
 
     dynamic_reconfigure_server_.registerVariable<double>("sensitivity", &parameters_.sensitivity_,
                                                          "Recognizer sensitivity", 0., 1.);
     dynamic_reconfigure_server_.publishServicesTopics();
 
     action_server_.start();
-    ROS_INFO("RecognizerNode(name=%s, execute_period=%.2f, record_directory=%s, max_record_length=%.2f) initialized "
-             "with parameters %s",
-             name.c_str(), execute_period_, record_directory.c_str(), max_record_length, toString(parameters_).c_str());
+    ROS_INFO("RecognizerNode(name=%s, action_name=%s, record_directory=%s, record_timeout=%.2f) initialized with "
+             "parameters %s",
+             name.c_str(), action_name.c_str(), record_directory.c_str(), record_timeout,
+             toString(parameters_).c_str());
   }
 
 private:
@@ -62,7 +66,6 @@ private:
                             typename ActionType::_action_result_type::_result_type& action_result) = 0;
 
   actionlib::SimpleActionServer<ActionType> action_server_;
-  double execute_period_ = 0.01;
   void executeCallback(const typename ActionType::_action_goal_type::_goal_type::ConstPtr& goal)
   {
     typename ActionType::_action_result_type::_result_type action_result;
@@ -103,7 +106,7 @@ private:
           ROS_WARN("Preempt requested");
           recognizer_.preempt();
         }
-        ros::Duration(execute_period_).sleep();
+        ros::Duration(EXECUTE_PERIOD).sleep();
       }
     }
     catch (const std::exception& e)

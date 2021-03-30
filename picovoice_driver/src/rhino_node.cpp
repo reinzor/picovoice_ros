@@ -28,7 +28,7 @@ class RhinoNode : public RecognizerNode<RhinoRecognizerData, RhinoRecognizer, Ge
 {
 public:
   RhinoNode(const RhinoRecognizerData::Parameters& parameters, const std::string& contexts_directory_url)
-    : RecognizerNode("get_intent", parameters), contexts_directory_url_(contexts_directory_url)
+    : RecognizerNode("rhino", "get_intent", parameters), contexts_directory_url_(contexts_directory_url)
   {
   }
 
