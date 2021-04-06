@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: 'ros-industrial/industrial_ci@master'
         env: ${{matrix.env}}
-  arm_build:
+  arm:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.1.0
       - uses: uraimo/run-on-arch-action@v2.0.5
-        id: build
+        name: Install ROS
         with:
           arch: ${{ matrix.arch }}
           distro: ubuntu20.04
@@ -35,8 +35,16 @@ jobs:
             apt-get update && apt-get install -y gnupg2
             echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list
             apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-            apt update && apt-get install -y ros-noetic-ros-base
+            apt update && apt-get install -y ros-noetic-ros-base python3-catkin-tools
             echo ::set-output name=uname::$(uname --m)
-      - name: Get the output
+      - name: Install ROS deps
         run: |
-          echo "The uname output was ${{ steps.build.outputs.uname }}"
+          source /opt/ros/$ROS_DISTRO/setup.bash
+          rosdep init && rosdep update
+          mkdir -p ~/catkin_ws
+          ln -s $GITHUB_WORKSPACE ~/catkin_ws/src
+          rosdep install --from-paths -y -i ~/catkin_ws/src
+      - name: Build
+        run: |
+          source /opt/ros/$ROS_DISTRO/setup.bash
+          cd ~/catkin_ws && catkin build
