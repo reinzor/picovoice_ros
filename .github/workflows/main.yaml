@@ -32,10 +32,10 @@ jobs:
           arch: ${{ matrix.arch }}
           distro: ubuntu20.04
           run: |
+            apt-get update && apt-get install -y gnupg2
             echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list
             apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-            apt update
-            apt-get -y install ros-noetic-ros-base
+            apt update && apt-get install -y ros-noetic-ros-base
             echo ::set-output name=uname::$(uname --m)
       - name: Get the output
         run: |
