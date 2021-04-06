@@ -2,8 +2,8 @@
 Changelog for package picovoice_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.3 (2021-04-06)
+------------------
 * chore: Remove trailing libs
 * Merge pull request `#2 <https://github.com/reinzor/picovoice_ros/issues/2>`_ from reinzor/feat/arm-build
   feat: ARM support
