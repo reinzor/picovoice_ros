@@ -35,5 +35,5 @@ jobs:
             apt-get update && apt-get install -y gnupg2
             echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list
             apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-            apt update && apt-get install -y ros-noetic-ros-base python3-catkin-tools
+            apt update && apt-get install -y ros-noetic-ros-base python3-catkin-tools python3-rosdep
             /bin/bash -c "source /opt/ros/noetic/setup.bash && rosdep init && rosdep update && mkdir -p ~/catkin_ws && ln -s $GITHUB_WORKSPACE ~/catkin_ws/src && rosdep install --from-paths -y -i ~/catkin_ws/src && cd ~/catkin_ws && catkin build"
