@@ -33,7 +33,7 @@ jobs:
           distro: ubuntu-latest
           run: |
             uname -a
-            echo ::set-output name=uname::$(uname -a)
+            echo ::set-output name=uname::$(uname --m)
       - name: Get the output
         # Echo the `uname` output parameter from the `runcmd` step
         run: |
