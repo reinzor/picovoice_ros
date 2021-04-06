@@ -30,8 +30,8 @@ find_package(LIBSNDFILE REQUIRED)
 set(PICOVOICE_DIR extern/picovoice)
 set(PICOVOICE_INCLUDE_DIRS ${PICOVOICE_DIR}/include)
 set(PICOVOICE_LIBRARIES
-  ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/libpv_porcupine.so
-  ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/libpv_rhino.so
+  ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/${CMAKE_HOST_SYSTEM_PROCESSOR}/libpv_porcupine.so
+  ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/lib/${CMAKE_HOST_SYSTEM_PROCESSOR}/libpv_rhino.so
 )
 
 include_directories(
