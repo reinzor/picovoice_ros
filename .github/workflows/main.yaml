@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   industrial_ci:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         env:
@@ -12,8 +13,17 @@ jobs:
     env:
       CATKIN_LINT: pedantic 
       CLANG_FORMAT_CHECK: file
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - uses: 'ros-industrial/industrial_ci@master'
         env: ${{matrix.env}}
+  armv7_job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: uraimo/run-on-arch-action@v2.0.5
+        with:
+          arch: armv7
+          distro: ubuntu20.04
+          run: |
+            uname -a
