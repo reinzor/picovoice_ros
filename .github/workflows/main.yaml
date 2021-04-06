@@ -39,12 +39,12 @@ jobs:
             echo ::set-output name=uname::$(uname --m)
       - name: Install ROS deps
         run: |
-          source /opt/ros/$ROS_DISTRO/setup.bash
+          source /opt/ros/noetic/setup.bash
           rosdep init && rosdep update
           mkdir -p ~/catkin_ws
           ln -s $GITHUB_WORKSPACE ~/catkin_ws/src
           rosdep install --from-paths -y -i ~/catkin_ws/src
       - name: Build
         run: |
-          source /opt/ros/$ROS_DISTRO/setup.bash
+          source /opt/ros/noetic/setup.bash
           cd ~/catkin_ws && catkin build
