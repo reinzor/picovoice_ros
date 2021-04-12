@@ -2,6 +2,14 @@
 Changelog for package picovoice_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#3 <https://github.com/reinzor/picovoice_ros/issues/3>`_ from reinzor/fix/cmake-system-processor
+  fix(cmake): Use CMAKE_SYSTEM_PROCESSOR
+* fix(cmake): Use CMAKE_SYSTEM_PROCESSOR
+  Should fix the armhf build
+* Contributors: Rein Appeldoorn
+
 0.0.3 (2021-04-06)
 ------------------
 * chore: Remove trailing libs

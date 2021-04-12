@@ -2,6 +2,9 @@
 Changelog for package picovoice_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.0.3 (2021-04-06)
 ------------------
 
