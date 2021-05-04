@@ -4,6 +4,16 @@ This repository contains drivers and ROS interfaces for the [Picovoice](https://
 
 ## Installation
 
+### Debians
+
+_Prerequisites: Working ROS Noetic environment_
+
+```
+sudo apt-get install ros-noetic-picovoice-driver
+```
+
+### Source
+
 ```
 roscd && cd ../src  # Navigate to the 'src' dir of your catkin workspace 
 git clone https://github.com/reinzor/picovoice_ros.git
