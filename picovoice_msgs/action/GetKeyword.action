@@ -1,5 +1,5 @@
-Keyword[] keywords
+Keyword[] keywords  # Keyword specification
 ---
-bool is_understood
-string keyword_name
+bool is_understood  # Whether it has understood a keyword
+string keyword_name  # Keyword name
 ---

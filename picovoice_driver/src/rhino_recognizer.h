@@ -39,6 +39,11 @@ struct RhinoRecognizerData
     std::string context_path_;
 
     //!
+    //! \brief intents_ Indent candidates, if empty, all returned intents will be considered valid
+    //!
+    std::vector<std::string> intents_;
+
+    //!
     //! \brief require_endpoint_ If `true`, Rhino requires an endpoint (chunk of silence) before finishing inference.
     //!
     bool require_endpoint_ = false;
