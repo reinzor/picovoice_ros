@@ -98,6 +98,8 @@ private:
 
   bool recognizeProcess(int16_t* frames) override;
 
+  std::vector<std::string> intents_;
+  RhinoRecognizerData::Result result_;
   pv_rhino_t* rhino_ = NULL;
 };
 }  // namespace picovoice_driver
