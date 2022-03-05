@@ -31,17 +31,17 @@ namespace picovoice_driver
 {
 struct RhinoRecognizerData
 {
-  struct Parameters
+  struct Parameters : RecognizerData::Parameters
   {
-    //!
-    //! \brief model_path_ Path to the Picovoice Rhino model parameters
-    //!
-    std::string model_path_;
-
     //!
     //! \brief context_path_ Path to the Picovoice Rhino context.rhn
     //!
     std::string context_path_;
+
+    //!
+    //! \brief require_endpoint_ If `true`, Rhino requires an endpoint (chunk of silence) before finishing inference.
+    //!
+    bool require_endpoint_ = false;
 
     //!
     //! \brief sensitivity_ Recognizer sensitivity

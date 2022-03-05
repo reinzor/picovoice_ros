@@ -47,6 +47,10 @@ public:
     ros::NodeHandle local_nh("~");
     auto record_directory = local_nh.param("record_directory", defaultRecordDirectory(name));
     auto record_timeout = local_nh.param("record_timeout", 300.);
+    if (!local_nh.getParam("access_key", parameters_.access_key_))
+    {
+      throw std::runtime_error("~access_key not specified");
+    }
     recognizer_.initialize(record_directory, record_timeout);
 
     dynamic_reconfigure_server_.registerVariable<double>("sensitivity", &parameters_.sensitivity_,

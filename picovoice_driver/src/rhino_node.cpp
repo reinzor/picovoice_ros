@@ -36,6 +36,7 @@ private:
   void updateParameters(const GetIntentGoal& goal, RhinoRecognizerData::Parameters& parameters) override
   {
     parameters.context_path_ = pathFromUrl(goal.context_url, ".rhn", contexts_directory_url_);
+    parameters.require_endpoint_ = goal.require_endpoint;
   }
 
   void updateResult(const RhinoRecognizerData::Result& result, GetIntentResult& action_result) override

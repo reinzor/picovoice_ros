@@ -23,8 +23,8 @@ namespace picovoice_driver
 {
 std::ostream& operator<<(std::ostream& os, const RhinoRecognizerData::Parameters& p)
 {
-  os << "Parameters(context_path=" << p.context_path_ << ", model_path=" << p.model_path_
-     << ", sensitivity=" << p.sensitivity_ << ")";
+  os << "Parameters(access_key=" << p.access_key_ << ", model_path=" << p.model_path_
+     << ", context_path=" << p.context_path_ << ", sensitivity=" << p.sensitivity_ << ")";
   return os;
 }
 
@@ -56,8 +56,9 @@ RhinoRecognizer::~RhinoRecognizer()
 
 void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameters)
 {
-  pv_status_t status = pv_rhino_init(parameters.model_path_.data(), parameters.context_path_.data(),
-                                     static_cast<float>(parameters.sensitivity_), &rhino_);
+  pv_status_t status =
+      pv_rhino_init(parameters.access_key_.data(), parameters.model_path_.data(), parameters.context_path_.data(),
+                    static_cast<float>(parameters.sensitivity_), parameters.require_endpoint_, &rhino_);
   if (status != PV_STATUS_SUCCESS)
   {
     throw std::runtime_error("Failed to initialize picovoice rhino with parameters " + toString(parameters) + ": " +

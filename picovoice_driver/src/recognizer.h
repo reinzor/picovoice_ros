@@ -23,12 +23,33 @@
 
 namespace picovoice_driver
 {
+struct RecognizerData
+{
+  struct Parameters
+  {
+    //!
+    //! \brief access_key_ Picovoice access key
+    //!
+    std::string access_key_;
+
+    //!
+    //! \brief model_path_ Path to the Picovoice model parameters
+    //!
+    std::string model_path_;
+  };
+};
+
 //!
 //! \brief The Recognizer class used for recognizing something out of audio data
 //!
 class Recognizer
 {
 public:
+  //!
+  //! \brief initialize Initialize the recognizer
+  //! \param record_directory Record directory
+  //! \param record_timeout Timeout for recording when doing a recognize request
+  //!
   void initialize(const std::string& record_directory, double record_timeout);
 
   //!

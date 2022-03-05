@@ -1,4 +1,5 @@
 string context_url
+bool require_endpoint
 ---
 bool is_understood
 string intent

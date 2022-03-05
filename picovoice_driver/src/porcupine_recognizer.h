@@ -30,13 +30,8 @@ namespace picovoice_driver
 {
 struct PorcupineRecognizerData
 {
-  struct Parameters
+  struct Parameters : RecognizerData::Parameters
   {
-    //!
-    //! \brief model_path_ Path to the Picovoice Porcupine model parameters
-    //!
-    std::string model_path_;
-
     //!
     //! \brief keywords_ Map from a keyword names to a keyword.ppn paths
     //!
