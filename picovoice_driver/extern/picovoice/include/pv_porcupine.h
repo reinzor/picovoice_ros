@@ -1,5 +1,5 @@
 /*
-    Copyright 2018-2020 Picovoice Inc.
+    Copyright 2018-2022 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -35,6 +35,7 @@ typedef struct pv_porcupine pv_porcupine_t;
 /**
  * Constructor.
  *
+ * @param access_key AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
  * @param model_path Absolute path to the file containing model parameters.
  * @param num_keywords Number of keywords to monitor.
  * @param keyword_paths Absolute paths to keyword model files.
@@ -44,15 +45,20 @@ typedef struct pv_porcupine pv_porcupine_t;
  * @return Status code. Returns 'PV_STATUS_INVALID_ARGUMENT', 'PV_STATUS_IO_ERROR', or 'PV_STATUS_OUT_OF_MEMORY' on
  * failure.
  */
-PV_API pv_status_t pv_porcupine_init(const char* model_path, int32_t num_keywords, const char* const* keyword_paths,
-                                     const float* sensitivities, pv_porcupine_t** object);
+PV_API pv_status_t pv_porcupine_init(
+        const char *access_key,
+        const char *model_path,
+        int32_t num_keywords,
+        const char *const *keyword_paths,
+        const float *sensitivities,
+        pv_porcupine_t **object);
 
 /**
  * Destructor.
  *
  * @param object Porcupine object.
  */
-PV_API void pv_porcupine_delete(pv_porcupine_t* object);
+PV_API void pv_porcupine_delete(pv_porcupine_t *object);
 
 /**
  * Processes a frame of the incoming audio stream and emits the detection result.
@@ -65,14 +71,14 @@ PV_API void pv_porcupine_delete(pv_porcupine_t* object);
  * the ordering of keyword models provided to 'pv_porcupine_init()'. If no keyword is detected then it is set to -1.
  * @return Status code. Returns 'PV_STATUS_INVALID_ARGUMENT' or 'PV_STATUS_OUT_OF_MEMORY' on failure.
  */
-PV_API pv_status_t pv_porcupine_process(pv_porcupine_t* object, const int16_t* pcm, int32_t* keyword_index);
+PV_API pv_status_t pv_porcupine_process(pv_porcupine_t *object, const int16_t *pcm, int32_t *keyword_index);
 
 /**
  * Getter for version.
  *
  * @return Version.
  */
-PV_API const char* pv_porcupine_version(void);
+PV_API const char *pv_porcupine_version(void);
 
 /**
  * Getter for number of audio samples per frame.
@@ -82,8 +88,9 @@ PV_API const char* pv_porcupine_version(void);
 PV_API int32_t pv_porcupine_frame_length(void);
 
 #ifdef __cplusplus
+
 }
 
 #endif
 
-#endif  // PV_PORCUPINE_H
+#endif // PV_PORCUPINE_H
