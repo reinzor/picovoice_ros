@@ -1,0 +1,9 @@
+[submodule "picovoice_driver/extern/rhino"]
+	path = picovoice_driver/extern/rhino
+	url = https://github.com/Picovoice/rhino.git
+[submodule "picovoice_driver/extern/porcupine"]
+	path = picovoice_driver/extern/porcupine
+	url = https://github.com/Picovoice/porcupine.git
+[submodule "picovoice_driver/extern/pvrecorder"]
+	path = picovoice_driver/extern/pvrecorder
+	url = https://github.com:Picovoice/pvrecorder.git
