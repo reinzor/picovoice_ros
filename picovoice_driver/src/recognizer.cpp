@@ -15,9 +15,12 @@
  *
  */
 
+#include <cmath>
 #include <boost/filesystem.hpp>
 #include <chrono>
-#include <portaudio.h>
+extern "C" {
+#include <pv_recorder.h>
+}
 #include <sndfile.h>
 #include <stdexcept>
 #include <vector>
@@ -55,28 +58,14 @@ void writeWav(const std::vector<int16_t>& buffer, size_t buffer_size, size_t sam
 
 void Recognizer::recognizeThread()
 {
-  preempt_requested_.store(false);
-  is_recognizing_.store(true);
-
-  PaError err = Pa_Initialize();
-  if (err != paNoError)
+  try
   {
-    is_recognizing_.store(false);
-    throw std::runtime_error("Failed to initialize PortAudio");
+    recognizeInit();
   }
-
-  PaStreamParameters input_parameters;
-  input_parameters.device = Pa_GetDefaultInputDevice();
-  if (input_parameters.device == paNoDevice)
+  catch (const std::exception& e)
   {
-    Pa_Terminate();
-    is_recognizing_.store(false);
-    throw std::runtime_error("Could not get default input device");
+    throw std::runtime_error("recognizeInit failed: " + std::string(e.what()));
   }
-  input_parameters.channelCount = 1;
-  input_parameters.sampleFormat = paInt16;
-  input_parameters.suggestedLatency = Pa_GetDeviceInfo(input_parameters.device)->defaultLowInputLatency;
-  input_parameters.hostApiSpecificStreamInfo = NULL;
 
   RecordSettings record_settings;
   try
@@ -85,74 +74,71 @@ void Recognizer::recognizeThread()
   }
   catch (const std::exception& e)
   {
-    Pa_Terminate();
-    is_recognizing_.store(false);
     throw std::runtime_error("getRecordSettings failed: " + std::string(e.what()));
   }
 
-  try
+  pv_recorder_t* recorder = NULL;
+  pv_recorder_status_t recorder_status = pv_recorder_init(-1, record_settings.frame_length_, 100, true, &recorder);
+  if (recorder_status != PV_RECORDER_STATUS_SUCCESS)
   {
-    recognizeInit();
-  }
-  catch (const std::exception& e)
-  {
-    Pa_Terminate();
-    is_recognizing_.store(false);
-    throw std::runtime_error("recognizeInit failed: " + std::string(e.what()));
+    throw std::runtime_error("Failed to initialize device with " +
+                             std::string(pv_recorder_status_to_string(recorder_status)));
   }
 
-  PaStream* stream;
-  err = Pa_OpenStream(&stream, &input_parameters, NULL, record_settings.sample_rate_, paFramesPerBufferUnspecified,
-                      paClipOff, NULL, NULL);
-  if (err != paNoError)
+  recorder_status = pv_recorder_start(recorder);
+  if (recorder_status != PV_RECORDER_STATUS_SUCCESS)
   {
-    Pa_Terminate();
-    is_recognizing_.store(false);
-    throw std::runtime_error("Could not open stream");
-  }
-
-  err = Pa_StartStream(stream);
-  if (err != paNoError)
-  {
-    Pa_Terminate();
-    is_recognizing_.store(false);
-    throw std::runtime_error("Could not start stream");
+    pv_recorder_delete(recorder);
+    throw std::runtime_error("Failed to start device with " +
+                             std::string(pv_recorder_status_to_string(recorder_status)));
   }
 
   bool is_finalized = false;
-  size_t sample_index = 0;
-  size_t total_samples = record_timeout_ * record_settings.sample_rate_;
-  std::vector<int16_t> recorded_samples(total_samples * sizeof(int16_t));
-  while (sample_index < total_samples && !is_finalized && !preempt_requested_.load())
+  size_t frame_index = 0;
+  size_t total_frames = std::ceil((record_timeout_ * record_settings.sample_rate_) / record_settings.frame_length_);
+  std::vector<int16_t> pcm(record_settings.frame_length_);
+  std::vector<int16_t> record_buffer(record_settings.frame_length_ * total_frames, 0);
+  while (frame_index < total_frames && !is_finalized && !preempt_requested_.load())
   {
-    err = Pa_ReadStream(stream, &recorded_samples.data()[sample_index], record_settings.frame_length_);
-    if (err)
+    recorder_status = pv_recorder_read(recorder, pcm.data());
+    if (recorder_status != PV_RECORDER_STATUS_SUCCESS)
     {
-      Pa_Terminate();
       is_recognizing_.store(false);
-      throw std::runtime_error("Could not read stream");
+      pv_recorder_delete(recorder);
+      throw std::runtime_error("Failed to read with " + std::string(pv_recorder_status_to_string(recorder_status)));
     }
 
     try
     {
-      is_finalized = recognizeProcess(&recorded_samples[sample_index]);
+      is_finalized = recognizeProcess(pcm.data());
     }
     catch (const std::exception& e)
     {
-      Pa_Terminate();
       is_recognizing_.store(false);
+      pv_recorder_delete(recorder);
       throw std::runtime_error("recognizeProcess failed: " + std::string(e.what()));
     }
-    sample_index += record_settings.frame_length_;
+
+    std::copy(pcm.begin(), pcm.end(), record_buffer.begin() + frame_index * pcm.size());
+    ++frame_index;
   }
 
-  Pa_Terminate();
+  recorder_status = pv_recorder_stop(recorder);
+  if (recorder_status != PV_RECORDER_STATUS_SUCCESS)
+  {
+    is_recognizing_.store(false);
+    pv_recorder_delete(recorder);
+    throw std::runtime_error("Failed to stop device with " +
+                             std::string(pv_recorder_status_to_string(recorder_status)));
+  }
 
   if (!record_directory_.empty())
   {
-    writeWav(recorded_samples, sample_index, record_settings.sample_rate_, record_directory_);
+    writeWav(record_buffer, frame_index * record_settings.frame_length_, record_settings.sample_rate_,
+             record_directory_);
   }
 
+  pv_recorder_delete(recorder);
   is_recognizing_.store(false);
 }
 
@@ -188,6 +174,7 @@ void Recognizer::recognize()
   }
   recognize_thread_exception_string_.clear();
   is_recognizing_.store(true);
+  preempt_requested_.store(false);
   recognize_thread_.reset(new std::thread(&Recognizer::recognizeThreadCatchException, this));
 }
 
