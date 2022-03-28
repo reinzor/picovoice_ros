@@ -24,6 +24,14 @@ catkin_package(
 ### Build ##
 ############
 
+find_package(PkgConfig)
+pkg_check_modules(YAML_CPP yaml-cpp)
+if(${YAML_CPP_VERSION} VERSION_GREATER 0.5)
+  add_definitions(-DHAVE_NEW_YAMLCPP)
+endif()
+link_directories(${YAML_CPP_LIBRARY_DIRS})
+include_directories(${YAML_CPP_INCLUDE_DIRS})
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
 find_package(LIBSNDFILE REQUIRED)
 
@@ -55,6 +63,7 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${LIBSNDFILE_LIBRARIES}
   ${PICOVOICE_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
 )
 
 add_executable(test_${PROJECT_NAME}_porcupine
@@ -92,12 +101,8 @@ install(DIRECTORY ${PICOVOICE_INCLUDE_DIRS}
   FILES_MATCHING PATTERN "*.h"
 )
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/resources/resources
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/resources
-)
-
-install(DIRECTORY ${EXTERN}/rhino/resources
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/extern/rhino/porcupine/resources
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/resources
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 install(

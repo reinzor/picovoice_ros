@@ -15,4 +15,5 @@
   <depend>picovoice_msgs</depend>
   <depend>roscpp</depend>
   <depend>roslib</depend>
+  <depend>yaml-cpp</depend>
 </package>

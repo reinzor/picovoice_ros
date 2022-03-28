@@ -10,8 +10,10 @@ ROS interface for the [Porcupine wake word engine](https://picovoice.ai/platform
 
 _More documentation about the recognizer can be found [here](https://github.com/Picovoice/porcupine)_
 
+_Access key: https://console.picovoice.ai/_
+
 ```
-rosrun picovoice_driver picovoice_driver_porcupine
+rosrun picovoice_driver picovoice_driver_porcupine _access_key:=[YOUR_ACCESS_KEY_HERE]
 ```
 
 #### Parameters
@@ -32,8 +34,10 @@ ROS interface for the [Rhino speech to intent engine](https://picovoice.ai/platf
 
 _More documentation about the recognizer can be found [here](https://github.com/Picovoice/rhino)_
 
+_Access key: https://console.picovoice.ai/_
+
 ```
-rosrun picovoice_driver picovoice_driver_rhino
+rosrun picovoice_driver picovoice_driver_rhino _access_key:=[YOUR_ACCESS_KEY_HERE]
 ```
 
 #### Parameters

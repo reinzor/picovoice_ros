@@ -17,6 +17,8 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
+#include <yaml-cpp/yaml.h>
 
 #include "./rhino_recognizer.h"
 
@@ -57,7 +59,11 @@ RhinoRecognizer::~RhinoRecognizer()
 
 void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameters)
 {
-  intents_ = parameters.intents_;
+  if (rhino_ != NULL)
+  {
+    pv_rhino_delete(rhino_);
+  }
+
   pv_status_t status =
       pv_rhino_init(parameters.access_key_.data(), parameters.model_path_.data(), parameters.context_path_.data(),
                     static_cast<float>(parameters.sensitivity_), parameters.require_endpoint_, &rhino_);
@@ -72,6 +78,33 @@ void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameter
   {
     throw std::runtime_error("Failed to get rhino context info: " + std::string(pv_status_to_string(status)));
   }
+
+  auto yaml = YAML::Load(context_info);
+  if (!yaml["context"])
+  {
+    throw std::runtime_error("Context missing key 'context': " + std::string(context_info));
+  }
+  if (!yaml["context"]["expressions"])
+  {
+    throw std::runtime_error("Context missing key 'context/expressions': " + std::string(context_info));
+  }
+
+  std::vector<std::string> context_intents;
+  for (const auto& kv : yaml["context"]["expressions"])
+  {
+    context_intents.push_back(kv.first.as<std::string>());
+  }
+
+  for (const auto& intent : parameters.intents_)
+  {
+    if (std::find(context_intents.begin(), context_intents.end(), intent) == context_intents.end())
+    {
+      throw std::runtime_error("Intent '" + intent +
+                               "' not available in context. Available intents: " + toString(context_intents));
+    }
+  }
+
+  intents_ = parameters.intents_;
 }
 
 RhinoRecognizerData::Result RhinoRecognizer::getResult()

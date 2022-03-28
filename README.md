@@ -34,8 +34,10 @@ roscore
 
 Start the `porcupine` recognizer from the `picovoice_driver` package
 
+_Access key: https://console.picovoice.ai/_
+
 ```
-rosrun picovoice_driver picovoice_driver_porcupine
+rosrun picovoice_driver picovoice_driver_porcupine _access_key:=[YOUR_ACCESS_KEY_HERE]
 ```
 
 Start the `axclient` in order to evaluate the action interface of the driver
@@ -61,8 +63,10 @@ press `SEND GOAL`, and say "Porcupine"
 
 Start the `rhino` recognizer from the `picovoice_driver` package
 
+_Access key: https://console.picovoice.ai/_
+
 ```
-rosrun picovoice_driver picovoice_driver_rhino
+rosrun picovoice_driver picovoice_driver_rhino _access_key:=[YOUR_ACCESS_KEY_HERE]
 ```
 
 Start the `axclient` in order to evaluate the action interface of the driver
