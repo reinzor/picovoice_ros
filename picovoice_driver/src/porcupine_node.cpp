@@ -64,8 +64,8 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "porcupine");
 
   ros::NodeHandle local_nh("~");
-  std::string model_url = local_nh.param("model_url", defaultResourceUrl() + "/models/porcupine_params.pv");
-  std::string keywords_directory_url = local_nh.param("keywords_directory_url", defaultResourceUrl() + "/keywords");
+  auto model_url = local_nh.param("model_url", defaultResourceUrl() + "/models/porcupine_params.pv");
+  auto keywords_directory_url = local_nh.param("keywords_directory_url", defaultResourceUrl() + "/keywords");
 
   try
   {

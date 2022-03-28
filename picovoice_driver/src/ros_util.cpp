@@ -26,7 +26,7 @@ namespace picovoice_driver
 {
 std::string defaultResourceUrl()
 {
-  return "package://picovoice_driver/extern/picovoice/resources";
+  return "package://picovoice_driver/resources";
 }
 
 std::string defaultRecordDirectory(const std::string& name)

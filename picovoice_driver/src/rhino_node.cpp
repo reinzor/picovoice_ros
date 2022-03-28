@@ -63,8 +63,8 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "rhino");
 
   ros::NodeHandle local_nh("~");
-  std::string model_url = local_nh.param("model_url", defaultResourceUrl() + "/models/rhino_params.pv");
-  std::string contexts_directory_url = local_nh.param("contexts_directory_url", defaultResourceUrl() + "/contexts");
+  auto model_url = local_nh.param("model_url", defaultResourceUrl() + "/models/rhino_params.pv");
+  auto contexts_directory_url = local_nh.param("contexts_directory_url", defaultResourceUrl() + "/contexts");
 
   try
   {

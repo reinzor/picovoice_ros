@@ -15,6 +15,7 @@
  *
  */
 
+#include <cmath>
 #include <boost/filesystem.hpp>
 #include <chrono>
 extern "C" {
@@ -93,13 +94,13 @@ void Recognizer::recognizeThread()
   }
 
   bool is_finalized = false;
-  size_t sample_index = 0;
-  size_t total_samples = record_timeout_ * record_settings.sample_rate_;
-  size_t frame_length_bytes = record_settings.frame_length_ * sizeof(int16_t);
-  std::vector<int16_t> pcm(frame_length_bytes);
-  while (sample_index < total_samples && !is_finalized && !preempt_requested_.load())
+  size_t frame_index = 0;
+  size_t total_frames = std::ceil((record_timeout_ * record_settings.sample_rate_) / record_settings.frame_length_);
+  std::vector<int16_t> pcm(record_settings.frame_length_);
+  std::vector<int16_t> record_buffer(record_settings.frame_length_ * total_frames, 0);
+  while (frame_index < total_frames && !is_finalized && !preempt_requested_.load())
   {
-    recorder_status = pv_recorder_read(recorder, &pcm[sample_index]);
+    recorder_status = pv_recorder_read(recorder, pcm.data());
     if (recorder_status != PV_RECORDER_STATUS_SUCCESS)
     {
       is_recognizing_.store(false);
@@ -109,7 +110,7 @@ void Recognizer::recognizeThread()
 
     try
     {
-      is_finalized = recognizeProcess(&pcm[sample_index]);
+      is_finalized = recognizeProcess(pcm.data());
     }
     catch (const std::exception& e)
     {
@@ -117,7 +118,9 @@ void Recognizer::recognizeThread()
       pv_recorder_delete(recorder);
       throw std::runtime_error("recognizeProcess failed: " + std::string(e.what()));
     }
-//    sample_index += record_settings.frame_length_;
+
+    std::copy(pcm.begin(), pcm.end(), record_buffer.begin() + frame_index * pcm.size());
+    ++frame_index;
   }
 
   recorder_status = pv_recorder_stop(recorder);
@@ -131,7 +134,8 @@ void Recognizer::recognizeThread()
 
   if (!record_directory_.empty())
   {
-//    writeWav(pcm, sample_index, record_settings.sample_rate_, record_directory_);
+    writeWav(record_buffer, frame_index * record_settings.frame_length_, record_settings.sample_rate_,
+             record_directory_);
   }
 
   pv_recorder_delete(recorder);

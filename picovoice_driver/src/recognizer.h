@@ -74,10 +74,6 @@ public:
   bool isRecognizing();
 
 protected:
-  bool initialized_ = false;
-  std::string record_directory_;
-  double record_timeout_;
-
   struct RecordSettings
   {
     size_t sample_rate_ = 0;
@@ -93,6 +89,10 @@ protected:
   virtual bool recognizeProcess(int16_t* frames) = 0;
 
 private:
+  std::string record_directory_;
+  double record_timeout_;
+  bool initialized_ = false;
+
   std::atomic<bool> preempt_requested_ = ATOMIC_VAR_INIT(false);
   std::atomic<bool> is_recognizing_ = ATOMIC_VAR_INIT(false);
 };

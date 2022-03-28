@@ -15,6 +15,7 @@ catkin_package(
   CATKIN_DEPENDS
     actionlib
     ddynamic_reconfigure
+    picovoice_msgs
     roscpp
     roslib
 )
@@ -26,16 +27,16 @@ catkin_package(
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
 find_package(LIBSNDFILE REQUIRED)
 
-set(EXTERN ${PROJECT_SOURCE_DIR}/${PICOVOICE_DIR}/extern)
+set(EXTERN ${PROJECT_SOURCE_DIR}/extern)
 set(PICOVOICE_INCLUDE_DIRS
   ${EXTERN}/porcupine/include
   ${EXTERN}/rhino/include
   ${EXTERN}/pvrecorder/include
 )
 set(PICOVOICE_LIBRARIES
-  ${EXTERN}/porcupine/lib/linux/${CMAKE_SYSTEM_PROCESSOR}/libpv_porcupine.so
-  ${EXTERN}/rhino/lib/linux/${CMAKE_SYSTEM_PROCESSOR}/libpv_rhino.so
-  ${EXTERN}/pvrecorder/lib/linux/${CMAKE_SYSTEM_PROCESSOR}/libpv_recorder.so
+  ${EXTERN}/porcupine/lib/linux/x86_64/libpv_porcupine.so
+  ${EXTERN}/rhino/lib/linux/x86_64/libpv_rhino.so
+  ${EXTERN}/pvrecorder/lib/linux/x86_64/libpv_recorder.so
 )
 
 include_directories(
@@ -66,40 +67,46 @@ add_executable(test_${PROJECT_NAME}_rhino
 )
 target_link_libraries(test_${PROJECT_NAME}_rhino ${PROJECT_NAME})
 
-#add_executable(${PROJECT_NAME}_porcupine
-#  src/porcupine_node.cpp
-#  src/ros_util.cpp
-#)
-#target_link_libraries(${PROJECT_NAME}_porcupine ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_porcupine
+  src/porcupine_node.cpp
+  src/ros_util.cpp
+)
+target_link_libraries(${PROJECT_NAME}_porcupine ${PROJECT_NAME})
 
-#add_executable(${PROJECT_NAME}_rhino
-#  src/rhino_node.cpp
-#  src/ros_util.cpp
-#)
-#target_link_libraries(${PROJECT_NAME}_rhino ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_rhino
+  src/rhino_node.cpp
+  src/ros_util.cpp
+)
+target_link_libraries(${PROJECT_NAME}_rhino ${PROJECT_NAME})
 
 ##############
 ### Install ##
 ##############
 
-#install(FILES ${PICOVOICE_LIBRARIES}
-#  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#)
+install(FILES ${PICOVOICE_LIBRARIES}
+  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
-#install(DIRECTORY ${PICOVOICE_INCLUDE_DIRS}
-#  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#  FILES_MATCHING PATTERN "*.h"
-#)
+install(DIRECTORY ${PICOVOICE_INCLUDE_DIRS}
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+)
 
-#install(DIRECTORY ${PICOVOICE_DIR}/resources
-#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${PICOVOICE_DIR}
-#)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/resources/resources
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/resources
+)
 
-#install(
-#  TARGETS
-#    ${PROJECT_NAME}
-#    ${PROJECT_NAME}_porcupine
-#    ${PROJECT_NAME}_rhino
-#  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-#  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#)
+install(DIRECTORY ${EXTERN}/rhino/resources
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/extern/rhino/porcupine/resources
+)
+
+install(
+  TARGETS
+    ${PROJECT_NAME}
+    ${PROJECT_NAME}_porcupine
+    ${PROJECT_NAME}_rhino
+    test_${PROJECT_NAME}_porcupine
+    test_${PROJECT_NAME}_rhino
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
