@@ -39,6 +39,11 @@ struct RhinoRecognizerData
     std::string context_path_;
 
     //!
+    //! \brief intents_ Indent candidates, if empty, all returned intents will be considered valid
+    //!
+    std::vector<std::string> intents_;
+
+    //!
     //! \brief require_endpoint_ If `true`, Rhino requires an endpoint (chunk of silence) before finishing inference.
     //!
     bool require_endpoint_ = false;
@@ -93,6 +98,8 @@ private:
 
   bool recognizeProcess(int16_t* frames) override;
 
+  std::vector<std::string> intents_;
+  RhinoRecognizerData::Result result_;
   pv_rhino_t* rhino_ = NULL;
 };
 }  // namespace picovoice_driver

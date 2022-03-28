@@ -1,7 +1,8 @@
-string context_url
-bool require_endpoint
+string context_url  # Url to the context file, e.g. package://[path], [path], file://[path] 
+string[] intents  # Optionally filter intents, Empty = no filter
+bool require_endpoint  # If `true`, Rhino requires an endpoint (chunk of silence) before finishing inference.
 ---
-bool is_understood
-string intent
-KeyValue[] slots
+bool is_understood  # Whether it understood an intent
+string intent  # Intent name
+KeyValue[] slots  # Slot key values within the intent
 ---
