@@ -6,4 +6,4 @@
 	url = https://github.com/Picovoice/porcupine.git
 [submodule "picovoice_driver/extern/pvrecorder"]
 	path = picovoice_driver/extern/pvrecorder
-	url = https://github.com:Picovoice/pvrecorder.git
+	url = https://github.com/Picovoice/pvrecorder.git
