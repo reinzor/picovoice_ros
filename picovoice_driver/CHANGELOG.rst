@@ -2,6 +2,11 @@
 Changelog for package picovoice_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix(deps): libsoundfile
+* Contributors: Rein Appeldoorn
+
 1.0.0 (2022-03-29)
 ------------------
 * feat: git submodules, pv_recorder, intent filter (`#4 <https://github.com/reinzor/picovoice_ros/issues/4>`_)
