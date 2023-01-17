@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(picovoice_driver)
 
-add_compile_options(-std=c++11)
-
 find_package(catkin REQUIRED COMPONENTS
   actionlib
   ddynamic_reconfigure
@@ -24,13 +22,10 @@ catkin_package(
 ### Build ##
 ############
 
-find_package(PkgConfig)
-pkg_check_modules(YAML_CPP yaml-cpp)
-if(${YAML_CPP_VERSION} VERSION_GREATER 0.5)
+find_package(yaml-cpp REQUIRED)
+if("${yaml-cpp_VERSION}" VERSION_GREATER "0.5")
   add_definitions(-DHAVE_NEW_YAMLCPP)
 endif()
-link_directories(${YAML_CPP_LIBRARY_DIRS})
-include_directories(${YAML_CPP_INCLUDE_DIRS})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
 find_package(LIBSNDFILE REQUIRED)
@@ -38,13 +33,13 @@ find_package(LIBSNDFILE REQUIRED)
 set(EXTERN ${PROJECT_SOURCE_DIR}/extern)
 set(PICOVOICE_INCLUDE_DIRS
   ${EXTERN}/porcupine/include
-  ${EXTERN}/rhino/include
   ${EXTERN}/pvrecorder/include
+  ${EXTERN}/rhino/include
 )
 set(PICOVOICE_LIBRARIES
   ${EXTERN}/porcupine/lib/linux/x86_64/libpv_porcupine.so
-  ${EXTERN}/rhino/lib/linux/x86_64/libpv_rhino.so
   ${EXTERN}/pvrecorder/lib/linux/x86_64/libpv_recorder.so
+  ${EXTERN}/rhino/lib/linux/x86_64/libpv_rhino.so
 )
 
 include_directories(

@@ -2,7 +2,7 @@
 <package format="3">
   <name>picovoice_msgs</name>
   <version>1.0.1</version>
-  <description>ROS interfaces for interacting with Picovoice driver nodes</description>
+  <description>ROS messages and actions definitions for interacting with picovoice_driver nodes</description>
 
   <maintainer email="reinzor@gmail.com">Rein Appeldoorn</maintainer>
 
