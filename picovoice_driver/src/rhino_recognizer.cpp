@@ -66,7 +66,8 @@ void RhinoRecognizer::configure(const RhinoRecognizerData::Parameters& parameter
 
   pv_status_t status =
       pv_rhino_init(parameters.access_key_.data(), parameters.model_path_.data(), parameters.context_path_.data(),
-                    static_cast<float>(parameters.sensitivity_), parameters.require_endpoint_, &rhino_);
+                    static_cast<float>(parameters.sensitivity_), static_cast<float>(parameters.endpoint_duration_sec_),
+                    parameters.require_endpoint_, &rhino_);
   if (status != PV_STATUS_SUCCESS)
   {
     throw std::runtime_error("Failed to initialize picovoice rhino with parameters " + toString(parameters) + ": " +
