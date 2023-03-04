@@ -20,6 +20,7 @@ jobs:
             ROS_DISTRO: noetic
             ROS_REPO: main
             CLANG_FORMAT_CHECK: file
+            CLANG_FORMAT_VERSION: 12
     env:
       CATKIN_LINT: pedantic
       CCACHE_DIR: /home/runner/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
