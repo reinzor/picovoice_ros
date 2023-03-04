@@ -16,9 +16,11 @@ jobs:
           - CI_TASK: build
             ROS_DISTRO: noetic
             ROS_REPO: main
+            SUBMODULES: recursive
           - CI_TASK: clang-format
             ROS_DISTRO: noetic
             ROS_REPO: main
+            SUBMODULES: false
             CLANG_FORMAT_CHECK: file
             CLANG_FORMAT_VERSION: 12
     env:
@@ -28,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: recursive
+          submodules: ${{ matrix.env.SUBMODULES }}
       # This step will fetch/store the directory used by ccache before/after the ci run
       - uses: actions/cache@v3
         with:
