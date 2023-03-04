@@ -44,6 +44,12 @@ struct RhinoRecognizerData
     std::vector<std::string> intents_;
 
     //!
+    //! \brief endpoint_duration_sec_ Endpoint duration in seconds. An endpoint is a chunk of silence at the end of an
+    //! utterance that marks the end of spoken command. It should be a positive number within [0.5, 5].
+    //!
+    double endpoint_duration_sec_ = 1.0;
+
+    //!
     //! \brief require_endpoint_ If `true`, Rhino requires an endpoint (chunk of silence) before finishing inference.
     //!
     bool require_endpoint_ = false;
