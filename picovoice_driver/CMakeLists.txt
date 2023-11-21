@@ -33,7 +33,7 @@ find_package(LIBSNDFILE REQUIRED)
 set(EXTERN ${PROJECT_SOURCE_DIR}/extern)
 set(PICOVOICE_INCLUDE_DIRS
   ${EXTERN}/porcupine/include
-  ${EXTERN}/pvrecorder/include
+  ${EXTERN}/pvrecorder/project/include
   ${EXTERN}/rhino/include
 )
 set(PICOVOICE_LIBRARIES
